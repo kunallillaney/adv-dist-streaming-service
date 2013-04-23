@@ -27,10 +27,6 @@ public class DataCenter {
 		return currentToken;
 	}
 
-	public void setCurrentToken(int currentToken) {
-		this.currentToken = currentToken;
-	}
-
 	public int getMaxToken() {
 		return maxToken;
 	}
