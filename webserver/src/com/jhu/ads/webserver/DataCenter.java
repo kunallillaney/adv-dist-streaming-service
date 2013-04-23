@@ -7,6 +7,10 @@ public class DataCenter {
 	private int maxToken;
 	private String spreadGroupName;
 
+    public String getToken() {
+        return null; // TODO
+    }
+	
 	public String getName() {
 		return name;
 	}
@@ -43,7 +47,4 @@ public class DataCenter {
 		this.spreadGroupName = spreadGroupName;
 	}
 
-	void getToken() {
-
-	}
 }
