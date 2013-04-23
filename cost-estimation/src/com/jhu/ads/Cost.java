@@ -2,6 +2,16 @@ package com.jhu.ads;
 
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
+import org.jfree.data.xy.CategoryTableXYDataset;
+import org.jfree.ui.RectangleInsets;
+
 public class Cost {
     
     /* Common */
@@ -13,7 +23,7 @@ public class Cost {
     /* Build your own */
     public static long BUILD_COST_PER_INSTANCE = 3000; /* In dollars including electricity for UPGRADE_YEARS years */
     public static long UPGRADE_YEARS = 5;
-    public static long COST_FOR_1_5_Mbps = 6; /* dollars per user per month */
+    public static long COST_FOR_1_5_Mbps = 5; /* dollars per user per month */
     public static double commonUncommonRatio = 0.5;
     
     /* Rent */
@@ -92,6 +102,9 @@ public class Cost {
     
     public static void main(String[] args) {
         Cost c = new Cost();
+        
+        CategoryTableXYDataset dataset = new CategoryTableXYDataset();
+        
         for (long numUsers = 0; numUsers <= MAX_CONCURRENT_USERS; numUsers+=SCALE_USERS_BY) {
             System.out.println("[ BuildUsers: " + numUsers + ", RentUsers: " + (MAX_CONCURRENT_USERS - numUsers) +"] ");
             long buildCost = c.computeBuildCost(numUsers);
@@ -99,8 +112,29 @@ public class Cost {
             System.out.println("BuildCost = " + buildCost/1000000
                                         + " RentCost = " + rentCost/1000000 
                                         + " TotalCost = " + ( (double)buildCost/1000000 + (double)rentCost/1000000) );
+            
+            dataset.add(numUsers/SCALE_USERS_BY, buildCost/1000000, "Build");
+            dataset.add(numUsers/SCALE_USERS_BY, rentCost/1000000, "Rent");
+            
             System.out.println();
         }
+    
+    
+        XYPlot plot = new XYPlot(dataset, new NumberAxis("Users Served by Build Data Center(in Million)  TotalUsers="+MAX_CONCURRENT_USERS/1000000+" million"), new NumberAxis(
+                "Total Cost(in Million)"), new StackedXYBarRenderer());
+        
+//        RectangleInsets offset = new RectangleInsets(0, 0, 0, 0);
+//        plot.setAxisOffset(offset );
+        
+        JFreeChart chart = new JFreeChart(plot);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        JFrame frame = new JFrame("Cost Analysis");
+        frame.setContentPane(chartPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
     }
+    
+    
 
 }
