@@ -1,14 +1,33 @@
 package com.jhu.ads.webserver;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.jhu.ads.webserver.common.ConfigMgr;
+
 public class DataCenter {
 	private String name;
-	private int controllerIP;
-	private int currentToken;
+	private String controllerIP;
+	private AtomicInteger currentToken; /* Token Available to be used currently */
 	private int maxToken;
 	private String spreadGroupName;
+	private boolean isAlive = false; /* Set this in the Token Manager when it starts up. */
 
-    public String getToken() {
-        return null; // TODO
+    public DataCenter(String name, String controllerIP, String spreadGroupName) {
+        this.name = name;
+        this.controllerIP = controllerIP;
+        this.spreadGroupName = spreadGroupName;
+    }
+
+    public int getAndIncrementCurrentToken() {
+        return currentToken.getAndIncrement();
+    }
+    
+    public boolean isDataCenterFull() {
+        return (currentToken.get() < maxToken) ? true : false;
+    }
+    
+    public String buildToken(int tokenNum) {
+        return ConfigMgr.getInstance().getWebServerName() + "_" + tokenNum;
     }
 	
 	public String getName() {
@@ -19,17 +38,13 @@ public class DataCenter {
 		this.name = name;
 	}
 
-	public int getControllerIP() {
-		return controllerIP;
-	}
+	public String getControllerIP() {
+        return controllerIP;
+    }
 
-	public void setControllerIP(int controllerIP) {
-		this.controllerIP = controllerIP;
-	}
-
-	public int getCurrentToken() {
-		return currentToken;
-	}
+    public void setControllerIP(String controllerIP) {
+        this.controllerIP = controllerIP;
+    }
 
 	public int getMaxToken() {
 		return maxToken;
@@ -45,6 +60,19 @@ public class DataCenter {
 
 	public void setSpreadGroupName(String spreadGroupName) {
 		this.spreadGroupName = spreadGroupName;
+	}
+	
+	public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    @Override
+	public String toString() {
+	    return "[ " + name + "; " + controllerIP + "; " + spreadGroupName + " ]";
 	}
 
 }
