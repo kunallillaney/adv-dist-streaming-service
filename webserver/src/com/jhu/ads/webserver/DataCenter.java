@@ -8,14 +8,15 @@ public class DataCenter {
 	private String name;
 	private String controllerIP;
 	private AtomicInteger currentToken; /* Token Available to be used currently */
-	private int maxToken;
+	private int maxToken = 100; // TODO
 	private String spreadGroupName;
-	private boolean isAlive = false; /* Set this in the Token Manager when it starts up. */
+	private boolean isAlive = true; //TODO /* Set this in the Token Manager when it starts up. */
 
     public DataCenter(String name, String controllerIP, String spreadGroupName) {
         this.name = name;
         this.controllerIP = controllerIP;
         this.spreadGroupName = spreadGroupName;
+        currentToken = new AtomicInteger(0);
     }
 
     public int getAndIncrementCurrentToken() {
@@ -23,7 +24,7 @@ public class DataCenter {
     }
     
     public boolean isDataCenterFull() {
-        return (currentToken.get() < maxToken) ? true : false;
+        return (currentToken.get() < maxToken) ? false : true;
     }
     
     public String buildToken(int tokenNum) {

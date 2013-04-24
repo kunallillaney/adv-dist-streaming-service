@@ -32,8 +32,8 @@ public class UserRequestServlet extends HttpServlet {
         
         resp.setContentType("text/html");
         PrintWriter printWriter  = resp.getWriter();
-        printWriter.println("<h1>" + dataCenter.getControllerIP() + "</h1>");
-        printWriter.println("<h1>" + token + "</h1>");
+        printWriter.println("<h1> ControllerIP: " + dataCenter.getControllerIP() + "</h1>");
+        printWriter.println("<h1> Token: " + token + "</h1>");
     }
     
     @Override
