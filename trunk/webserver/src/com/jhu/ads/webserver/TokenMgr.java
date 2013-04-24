@@ -62,6 +62,7 @@ public class TokenMgr implements AdvancedMessageListener {
 		{
 			connection = new SpreadConnection();
 			connection.connect(InetAddress.getByName(spreadAddr), spreadPort, spreadUser, false, true);
+			connection.add(TokenMgr.getInstance());
 		}
 		catch(SpreadException e)
 		{
