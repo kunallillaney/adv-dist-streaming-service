@@ -52,7 +52,8 @@ public class GeoIPMgr {
 	public static void main(String[] args) {
 		GeoIPMgr test = new GeoIPMgr();
 		test.init("C:\\Users\\klillaney\\Desktop\\Spring 2013\\Advanced Distributed Systems\\GeoIPJava-1.2.9\\GeoLiteCity.dat");
-		System.out.println(test.getZipCode("127.0.0.1"));
+		System.out.println(test.getZipCode("128.220.221.123" +
+				""));
 	}
 
 }
