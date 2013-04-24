@@ -1,0 +1,45 @@
+<DataCentersConfig>
+	<DataCenterList>
+	    <DataCenter>
+	        <Name>Build_West_DataCenter_1</Name>
+	        <ControllerIP></ControllerIP>
+	        <SpreadGroupName></SpreadGroupName>
+	    </DataCenter>
+	    <DataCenter>
+	        <Name>Build_East_DataCenter_1</Name>
+	        <ControllerIP></ControllerIP>
+	        <SpreadGroupName></SpreadGroupName>
+	    </DataCenter>
+	    <DataCenter>
+	        <Name>Rent_West_DataCenter_1</Name>
+	        <ControllerIP></ControllerIP>
+	        <SpreadGroupName></SpreadGroupName>
+	    </DataCenter>
+	    <DataCenter>
+	        <Name>Rent_East_DataCenter_1</Name>
+	        <ControllerIP></ControllerIP>
+	        <SpreadGroupName></SpreadGroupName>
+	    </DataCenter>
+	</DataCenterList>
+	
+	<ZipcodeDataCenterMap>
+	       <KeyValuePair>
+	           <ZipCode>0,1,2,3,4</ZipCode>
+	           <DataCenterOrder>
+	               Build_East_DataCenter_1, 
+	               Build_West_DataCenter_1, 
+	               Rent_East_DataCenter_1, 
+	               Rent_West_DataCenter_1
+               </DataCenterOrder>
+           </KeyValuePair>
+           <KeyValuePair>
+               <ZipCode>5,6,7,8,9</ZipCode>
+               <DataCenterOrder>
+                    Build_West_DataCenter_1, 
+                    Build_East_DataCenter_1, 
+                    Rent_West_DataCenter_1, 
+                    Rent_East_DataCenter_1
+               </DataCenterOrder>
+	       </KeyValuePair>
+	</ZipcodeDataCenterMap>
+</DataCentersConfig>
