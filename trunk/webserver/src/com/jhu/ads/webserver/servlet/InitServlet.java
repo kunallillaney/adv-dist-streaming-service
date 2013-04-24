@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 import com.jhu.ads.webserver.DataCenterMgr;
@@ -14,6 +15,7 @@ import com.jhu.ads.webserver.GeoIPMgr;
 import com.jhu.ads.webserver.TokenMgr;
 import com.jhu.ads.webserver.common.ConfigMgr;
 
+@WebServlet( name="InitServlet", displayName="Initialization Servlet", urlPatterns = {"/init"}, loadOnStartup=1)
 public class InitServlet extends HttpServlet {
     
     @Override
