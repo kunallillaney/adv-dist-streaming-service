@@ -22,17 +22,17 @@ public class InitServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         // TODO Auto-generated method stub
         
-/*        String dHome = System.getenv("DHOME");
+        String dHome = System.getenv("DHOME");
         if(dHome == null || dHome.equals("")) {
             throw new ServletException("DHOME environment variable NOT set.");
-        }*/
+        }
         
         // String path = config.getServletContext().getRealPath("/WEB-INF");
-        ConfigMgr.getInstance().init("/home/klillan1/conf/" + "/webserver-config.properties");
+        ConfigMgr.getInstance().init(dHome + "/conf/webserver-config.properties");
         
         InputStream is;
         try {
-            is = new FileInputStream("/home/klillan1/conf/" + "/datacenter-config.xml");
+            is = new FileInputStream(dHome + "/conf/datacenter-config.xml");
             DataCenterMgr.getInstance().init(is);
             is.close();
         } catch (FileNotFoundException e) {
@@ -43,7 +43,7 @@ public class InitServlet extends HttpServlet {
             e.printStackTrace();
         }
         
-        TokenMgr.getInstance().init();
+        // TokenMgr.getInstance().init();
         GeoIPMgr.getInstance().init(ConfigMgr.getInstance().getGeoIPFilePath());
     }
     

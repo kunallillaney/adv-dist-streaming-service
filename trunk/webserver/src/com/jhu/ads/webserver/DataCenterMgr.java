@@ -47,7 +47,7 @@ public class DataCenterMgr implements Constants {
     
     public DataCenter getDataCenter(int zipCode) {
         DataCenter retDataCenter = null;
-        ArrayList<DataCenter> dataCenterList = zipCodeMap.get(zipCode);
+        ArrayList<DataCenter> dataCenterList = zipCodeMap.get(zipCode/10000);
         for (Iterator iterator = dataCenterList.iterator(); iterator.hasNext();) {
             DataCenter dataCenter = (DataCenter) iterator.next();
             if(dataCenter.isAlive() && !dataCenter.isDataCenterFull()) {
