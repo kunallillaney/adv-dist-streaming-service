@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 
 import com.jhu.ads.webserver.DataCenterMgr;
 import com.jhu.ads.webserver.GeoIPMgr;
+import com.jhu.ads.webserver.TokenMgr;
 import com.jhu.ads.webserver.common.ConfigMgr;
 
 public class InitServlet extends HttpServlet {
@@ -40,7 +41,7 @@ public class InitServlet extends HttpServlet {
             e.printStackTrace();
         }
         
-        // TokenMgr.getInstance().init();
+        TokenMgr.getInstance().init();
         GeoIPMgr.getInstance().init(ConfigMgr.getInstance().getGeoIPFilePath());
     }
     
