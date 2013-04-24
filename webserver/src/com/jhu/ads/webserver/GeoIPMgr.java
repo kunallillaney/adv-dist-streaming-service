@@ -36,7 +36,7 @@ public class GeoIPMgr {
 		return geoSingleton;
 	}
 
-	int getZipCode(String locationIp) {
+	public int getZipCode(String locationIp) {
 		Location centerIp = lookUp.getLocation(locationIp);
 		return (centerIp.postalCode!=null) ? Integer.parseInt(centerIp.postalCode) : 21210;
 	}
