@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,6 +73,10 @@ public class DataCenterMgr implements Constants {
             }
         }
         return retDataCenter;
+    }
+    
+    public Iterator<DataCenter> getAllDataCenters() {
+        return dataCenterMap.values().iterator();
     }
     
     
@@ -137,7 +143,7 @@ public class DataCenterMgr implements Constants {
         
     }
 
-    public static String getTextValue(Element ele, String tagName) {
+    private static String getTextValue(Element ele, String tagName) {
         String textVal = null;
         NodeList nl = ele.getElementsByTagName(tagName);
         if(nl != null && nl.getLength() > 0) {

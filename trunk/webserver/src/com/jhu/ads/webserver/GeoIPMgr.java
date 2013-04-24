@@ -23,7 +23,7 @@ public class GeoIPMgr {
 		}
 	}
 
-	public GeoIPMgr getInstance() {
+	public static GeoIPMgr getInstance() {
 
 		if (geoSingleton == null) {
 			synchronized (GeoIPMgr.class) {
