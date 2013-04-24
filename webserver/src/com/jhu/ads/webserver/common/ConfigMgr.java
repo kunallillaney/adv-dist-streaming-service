@@ -1,0 +1,69 @@
+package com.jhu.ads.webserver.common;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+public class ConfigMgr {
+    
+    private Properties props;
+    
+    private static String GEO_IP_FILE_PATH_PROPERTY = "MaxMindGeoIPFilePath";
+    private static String DATACENTER_INFO_FILE_PATH_PROPERTY = "DataCenterInfoFilePath";
+    private static String SPREAD_DEAMON_ADDR_PROPERTY = "SpreadDeamonAddr";
+    private static String SPREAD_DEAMON_PORT_PROPERTY = "SpreadDeamonPort";
+    private static String WEB_SERVER_NAME_PROPERTY = "WebServerName";
+    
+    private volatile static ConfigMgr _instance = null;
+    
+    public static ConfigMgr getInstance() {
+        if(_instance == null) {
+            synchronized (ConfigMgr.class) {
+                if(_instance == null) {
+                    _instance = new ConfigMgr();
+                }
+            }
+        }
+        return _instance;
+    }
+    
+    public String getGeoIPFilePath() {
+        return props.getProperty(GEO_IP_FILE_PATH_PROPERTY);
+    }
+    
+    public String DataCentersInfoFilePath() {
+        return props.getProperty(DATACENTER_INFO_FILE_PATH_PROPERTY);
+    }
+    
+    public String getSpreadDeamonAddress() {
+        return props.getProperty(SPREAD_DEAMON_ADDR_PROPERTY);
+    }
+    
+    public int getSpreadDeamonPort() {
+        return Integer.parseInt(props.getProperty(SPREAD_DEAMON_PORT_PROPERTY));
+    }
+
+    public String getWebServerName() {
+        return props.getProperty(WEB_SERVER_NAME_PROPERTY);
+    }
+    
+    public void init(String configFilePath) {
+        props = new Properties();
+        InputStream inStream;
+        try {
+            inStream = new FileInputStream(configFilePath);
+            props.load(inStream);
+            inStream.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
+
+}
