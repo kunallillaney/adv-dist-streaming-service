@@ -18,8 +18,7 @@ public class GeoIPMgr {
 
 	public void init(String fileName) {
 		try {
-			String fileName1 = "C:\\Users\\klillaney\\Desktop\\Spring 2013\\Advanced Distributed Systems\\GeoIPJava-1.2.9\\GeoLiteCity.dat";
-			lookUp = new LookupService(fileName1,
+			lookUp = new LookupService(fileName,
 					LookupService.GEOIP_MEMORY_CACHE);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -43,6 +42,7 @@ public class GeoIPMgr {
 	 * @return int
 	 */
 	public int getZipCode(String locationIp) {
+		System.out.println("Raghu is returning:"+locationIp);
 		Location centerIp = lookUp.getLocation(locationIp);
 		if (centerIp == null)
 			return 21210;
