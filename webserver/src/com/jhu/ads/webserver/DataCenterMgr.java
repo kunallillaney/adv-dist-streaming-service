@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -43,18 +44,33 @@ public class DataCenterMgr implements Constants {
     }
     
     public DataCenter getDataCenter(int zipCode) {
+        DataCenter retDataCenter = null;
         ArrayList<DataCenter> dataCenterList = zipCodeMap.get(zipCode);
         for (Iterator iterator = dataCenterList.iterator(); iterator.hasNext();) {
             DataCenter dataCenter = (DataCenter) iterator.next();
             if(dataCenter.isAlive() && !dataCenter.isDataCenterFull()) {
-                return dataCenter;
+                retDataCenter =  dataCenter;
+                break;
             }
         }
-        return null;
+        return retDataCenter;
     }
     
     public DataCenter getDataCenter(String name) {
         return dataCenterMap.get(name);
+    }
+    
+    public DataCenter getDataCenterBasedOnSpreadName(String spreadName) {
+        DataCenter retDataCenter = null;
+        Collection<DataCenter> dataCenterValueSet = dataCenterMap.values();
+        for (Iterator iterator = dataCenterValueSet.iterator(); iterator.hasNext();) {
+            DataCenter dataCenter = (DataCenter) iterator.next();
+            if(dataCenter.getSpreadGroupName().equals(spreadName)) {
+                retDataCenter = dataCenter;
+                break;
+            }
+        }
+        return retDataCenter;
     }
     
     
