@@ -28,7 +28,7 @@ public class Cost {
     /* Build your own */
     public long buildCostPerInstance; /* In dollars including electricity for UPGRADE_YEARS years */
     public long upgradeYears;
-    public long costFor1_5Mbps; /* dollars per user per month */
+    public double costFor1_5Mbps; /* dollars per user per month */
     
     /* Rent */
     public long rentCostPerInstance; /* In dollars per year, for medium utilization */
@@ -59,7 +59,7 @@ public class Cost {
             
             buildCostPerInstance = getL("BUILD_COST_PER_INSTANCE"); /* In dollars including electricity for UPGRADE_YEARS years */
             upgradeYears = getL("UPGRADE_YEARS");
-            costFor1_5Mbps = getL("COST_FOR_1_5_Mbps"); /* dollars per user per month */
+            costFor1_5Mbps = getD("COST_FOR_1_5_Mbps"); /* dollars per user per month */
             
             rentCostPerInstance = getL("RENT_COST_PER_INSTANCE"); /* In dollars per year, for medium utilization */
             bandwidthPerUser = getD("BANDWIDTH_PER_USER"); /* Mbps */
@@ -113,7 +113,7 @@ public class Cost {
         long infrastructureCostPerYear = infrastructureCost/upgradeYears; /* Effective Per year cost */
         
         /* Network Cost */
-        long networkCostPerYear = numUsers * costFor1_5Mbps * MONTHS_IN_AN_YEAR;
+        long networkCostPerYear = (long)(numUsers * costFor1_5Mbps * MONTHS_IN_AN_YEAR);
         System.out.println("infrastructureCostPerYear = " + infrastructureCostPerYear + " networkCostPerYear = " + networkCostPerYear);
         return (infrastructureCostPerYear + networkCostPerYear);   
     }
