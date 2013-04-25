@@ -1,6 +1,12 @@
 package com.jhu.ads;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.JFrame;
 
@@ -10,90 +16,135 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
 import org.jfree.data.xy.CategoryTableXYDataset;
-import org.jfree.ui.RectangleInsets;
 
 public class Cost {
     
     /* Common */
-    public static long COMMON_USERS_PER_INSTANCE = 1800;
-    public static long UNCOMMON_USERS_PER_INSTANCE = 600;
-    public static long MONTHS_IN_AN_YEAR = 12;
-    public static long DAYS_IN_MONTH = 30;
+    public long commonUsersPerInstance;
+    public long uncommonUsersPerInstance;
+    public double commonUncommonRatio;
+    public long maxConcurrentUsers;
     
     /* Build your own */
-    public static long BUILD_COST_PER_INSTANCE = 3000; /* In dollars including electricity for UPGRADE_YEARS years */
-    public static long UPGRADE_YEARS = 5;
-    public static long COST_FOR_1_5_Mbps = 5; /* dollars per user per month */
-    public static double commonUncommonRatio = 0.5;
+    public long buildCostPerInstance; /* In dollars including electricity for UPGRADE_YEARS years */
+    public long upgradeYears;
+    public long costFor1_5Mbps; /* dollars per user per month */
     
     /* Rent */
-    public static long RENT_COST_PER_INSTANCE = 860; /* In dollars per year, for medium utilization */
+    public long rentCostPerInstance; /* In dollars per year, for medium utilization */
+    public double bandwidthPerUser; /* Mbps */
+    public double costPerGigaByteTransfer;
     
-    // public static long MIN_CONCURRENT_USERS = 200000;
-    public static long MAX_CONCURRENT_USERS = 10000000;
-    public static long AVG_HOURS_PER_USER = 80; /* Per month */
-    public static long TOTAL_USERS = 30000000;
-    public static double BANDWIDTH_PER_USER = 1.5; /* Mbps */
-    public static double COST_PER_GIGABYTE_TRANSFER = 0.04;
-    public static long SCALE_USERS_BY = 1000000;
+    /* Misc */
+    public long scaleUsersBy;
     
-    public static ArrayList<Double> percentageList = new ArrayList<Double>();
+    public ArrayList<Double> percentageList;
     
-    static {
-        percentageList.add(0.80);
-        percentageList.add(0.70);
-        percentageList.add(0.67);
-        percentageList.add(0.30);
-        percentageList.add(0.25);
-        percentageList.add(0.21);
-        percentageList.add(0.17);
-        percentageList.add(0.125);
-        percentageList.add(0.1);
-        percentageList.add(0.05);
-    }
+    public static final long MONTHS_IN_AN_YEAR = 12;
+    public static final long DAYS_IN_MONTH = 30;
+    
+    private Properties props; 
+    
+    public Cost(String filePath) {
+        try {
+            FileInputStream fin  = new FileInputStream(filePath);
+            props = new Properties();
+            props.load(fin);
+            fin.close();
+            
+            commonUsersPerInstance = getL("COMMON_USERS_PER_INSTANCE");
+            uncommonUsersPerInstance = getL("UNCOMMON_USERS_PER_INSTANCE");
+            commonUncommonRatio = getD("commonUncommonRatio");
+            maxConcurrentUsers = getL("MAX_CONCURRENT_USERS");
+            
+            buildCostPerInstance = getL("BUILD_COST_PER_INSTANCE"); /* In dollars including electricity for UPGRADE_YEARS years */
+            upgradeYears = getL("UPGRADE_YEARS");
+            costFor1_5Mbps = getL("COST_FOR_1_5_Mbps"); /* dollars per user per month */
+            
+            rentCostPerInstance = getL("RENT_COST_PER_INSTANCE"); /* In dollars per year, for medium utilization */
+            bandwidthPerUser = getD("BANDWIDTH_PER_USER"); /* Mbps */
+            costPerGigaByteTransfer = getD("COST_PER_GIGABYTE_TRANSFER");
+            
+            scaleUsersBy = getL("SCALE_USERS_BY");
+            
+            percentageList = getAL("percentageList");
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
+    }
+
+    public ArrayList<Double> getAL(String keyPrefix) {
+        Set<Object> keySet = props.keySet();
+        ArrayList<Double> retList = new ArrayList<Double>();
+        for (Iterator iterator = keySet.iterator(); iterator.hasNext();) {
+            String propKey = (String) iterator.next();
+            if(propKey.startsWith(keyPrefix)) {
+                String idxStr = propKey.substring(propKey.lastIndexOf(".")+1);
+                int idx  = Integer.parseInt(idxStr) - 1;
+                while(idx >= retList.size()) {
+                    retList.add(null);
+                }
+                retList.set(idx, Double.parseDouble(props.getProperty(propKey)));
+            }
+        }
+        return retList;
+    }
+
+    public long getL(String key) {
+        return Long.parseLong(props.getProperty(key).trim());
+    }
+    
+    public Double getD(String key) {
+        return Double.parseDouble(props.getProperty(key).trim());
+    }
+    
     public long computeBuildCost(long numUsers) {
         
         /* Infrastructure Cost */
-        long commonMovieInstances = (long)((numUsers*commonUncommonRatio)/COMMON_USERS_PER_INSTANCE);
-        long uncommonMovieInstances = (long)((numUsers*(1-commonUncommonRatio))/UNCOMMON_USERS_PER_INSTANCE);
+        long commonMovieInstances = (long)((numUsers*commonUncommonRatio)/commonUsersPerInstance);
+        long uncommonMovieInstances = (long)((numUsers*(1-commonUncommonRatio))/uncommonUsersPerInstance);
         long totalInstances = commonMovieInstances + uncommonMovieInstances;
-        long infrastructureCost = totalInstances * BUILD_COST_PER_INSTANCE;
-        long infrastructureCostPerYear = infrastructureCost/UPGRADE_YEARS; /* Effective Per year cost */
+        long infrastructureCost = totalInstances * buildCostPerInstance;
+        long infrastructureCostPerYear = infrastructureCost/upgradeYears; /* Effective Per year cost */
         
         /* Network Cost */
-        long networkCostPerYear = numUsers * COST_FOR_1_5_Mbps * MONTHS_IN_AN_YEAR;
+        long networkCostPerYear = numUsers * costFor1_5Mbps * MONTHS_IN_AN_YEAR;
         System.out.println("infrastructureCostPerYear = " + infrastructureCostPerYear + " networkCostPerYear = " + networkCostPerYear);
         return (infrastructureCostPerYear + networkCostPerYear);   
     }
     
     public long computeRentCost(long numBuildUsers) {
         
-        long numRentUsers = MAX_CONCURRENT_USERS - numBuildUsers;
+        long numRentUsers = maxConcurrentUsers - numBuildUsers;
         
         /* Effective Infrastructure Cost */
-        long commonMovieInstances = (long)((numRentUsers*commonUncommonRatio)/COMMON_USERS_PER_INSTANCE);
-        long uncommonMovieInstances = (long)((numRentUsers*(1-commonUncommonRatio))/UNCOMMON_USERS_PER_INSTANCE);
-        long effInfrastructureCostPerYear = ((commonMovieInstances + uncommonMovieInstances) * RENT_COST_PER_INSTANCE);
+        long commonMovieInstances = (long)((numRentUsers*commonUncommonRatio)/commonUsersPerInstance);
+        long uncommonMovieInstances = (long)((numRentUsers*(1-commonUncommonRatio))/uncommonUsersPerInstance);
+        long effInfrastructureCostPerYear = ((commonMovieInstances + uncommonMovieInstances) * rentCostPerInstance);
         
         /* Network Cost */
-        long totalDataNeededPerScaleUsers = (long) ((24 * 3600 * BANDWIDTH_PER_USER * SCALE_USERS_BY)/(8*1024)); /* For one day */
+        double totalDataNeededPerScaleUsers = (double) ((24 * 3600 * bandwidthPerUser * scaleUsersBy)/(8*1024)); /* For one day */
         long moreUsers = numRentUsers;
         int startIndex = (int)numBuildUsers/1000000;
         int idx = startIndex;
-        long totalDataPerDay = 0;
+        double totalDataPerDay = 0;
                 
         while(moreUsers > 0) {
             totalDataPerDay += (totalDataNeededPerScaleUsers * percentageList.get(idx));
-            moreUsers -= SCALE_USERS_BY;
-            if(moreUsers % 1000000 == 0) { /* TODO: Cannot scale if 1000000 is not divisible by SCALE_USERS_BY */ 
+            moreUsers -= scaleUsersBy;
+            if(moreUsers % 1000000 == 0) { /* TODO: Cannot scale if 1000000 is not a multiple of SCALE_USERS_BY */ 
                 idx++;
             }
         }
         
         // System.out.println("totalDataNeededPerMonth= " + totalDataNeededPerMonth + " rentDataNeededPerMonth = " + rentDataNeededPerMonth);
         
-        long costRentData = (long)(totalDataPerDay * DAYS_IN_MONTH * COST_PER_GIGABYTE_TRANSFER);
+        long costRentData = (long)(totalDataPerDay * DAYS_IN_MONTH * costPerGigaByteTransfer);
         long costRentDataPerYear = costRentData * MONTHS_IN_AN_YEAR;
         
         System.out.println("EffInfrastructureCostPerYear = " + effInfrastructureCostPerYear + " networkCostPerYear = " + costRentDataPerYear);
@@ -101,30 +152,30 @@ public class Cost {
     }
     
     public static void main(String[] args) {
-        Cost c = new Cost();
+        Cost c = new Cost("C:\\JHU\\Sem4\\AdvDistributed\\proj\\cost-estimation\\src\\values.properties");
         
         CategoryTableXYDataset dataset = new CategoryTableXYDataset();
         
-        for (long numUsers = 0; numUsers <= MAX_CONCURRENT_USERS; numUsers+=SCALE_USERS_BY) {
-            System.out.println("[ BuildUsers: " + numUsers + ", RentUsers: " + (MAX_CONCURRENT_USERS - numUsers) +"] ");
+        for (long numUsers = 0; numUsers <= c.maxConcurrentUsers; numUsers+=c.scaleUsersBy) {
+            System.out.println("[ BuildUsers: " + numUsers + ", RentUsers: " + (c.maxConcurrentUsers - numUsers) +"] ");
             long buildCost = c.computeBuildCost(numUsers);
             long rentCost = c.computeRentCost(numUsers);
             System.out.println("BuildCost = " + buildCost/1000000
                                         + " RentCost = " + rentCost/1000000 
                                         + " TotalCost = " + ( (double)buildCost/1000000 + (double)rentCost/1000000) );
             
-            dataset.add(numUsers/SCALE_USERS_BY, buildCost/1000000, "Build");
-            dataset.add(numUsers/SCALE_USERS_BY, rentCost/1000000, "Rent");
+            dataset.add(numUsers/c.scaleUsersBy, buildCost/1000000, "Build");
+            dataset.add(numUsers/c.scaleUsersBy, rentCost/1000000, "Rent");
             
             System.out.println();
         }
     
     
-        XYPlot plot = new XYPlot(dataset, new NumberAxis("Users Served by Build Data Center(in Million)  TotalUsers="+MAX_CONCURRENT_USERS/1000000+" million"), new NumberAxis(
-                "Total Cost(in Million)"), new StackedXYBarRenderer());
-        
-//        RectangleInsets offset = new RectangleInsets(0, 0, 0, 0);
-//        plot.setAxisOffset(offset );
+        XYPlot plot = new XYPlot(dataset, new NumberAxis(
+                "Users Served by Build Data Center(in "
+                        + (c.scaleUsersBy == 1000000 ? "million": c.scaleUsersBy) + ")  " 
+                        + "TotalUsers=" + c.maxConcurrentUsers / 1000000 + " million"),
+                        new NumberAxis("Total Cost(in Million)"), new StackedXYBarRenderer());
         
         JFreeChart chart = new JFreeChart(plot);
         ChartPanel chartPanel = new ChartPanel(chart);
@@ -135,6 +186,4 @@ public class Cost {
         frame.setVisible(true);
     }
     
-    
-
 }
