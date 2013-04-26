@@ -27,11 +27,8 @@ public class DataCenterMgr implements Constants {
     
     private HashMap<String, DataCenter> dataCenterMap;
     
-    private HashMap<Integer, ArrayList<DataCenter>> zipCodeMap;
-    
     private DataCenterMgr() {
         dataCenterMap = new HashMap<String, DataCenter>();
-        zipCodeMap = new HashMap<Integer, ArrayList<DataCenter>>();
     }
     
     public static DataCenterMgr getInstance() {
@@ -43,19 +40,6 @@ public class DataCenterMgr implements Constants {
             }
         }
         return _instance;
-    }
-    
-    public DataCenter getDataCenter(int zipCode) {
-        DataCenter retDataCenter = null;
-        ArrayList<DataCenter> dataCenterList = zipCodeMap.get(zipCode/10000);
-        for (Iterator iterator = dataCenterList.iterator(); iterator.hasNext();) {
-            DataCenter dataCenter = (DataCenter) iterator.next();
-            if(dataCenter.isAlive() && !dataCenter.isDataCenterFull()) {
-                retDataCenter =  dataCenter;
-                break;
-            }
-        }
-        return retDataCenter;
     }
     
     public DataCenter getDataCenter(String name) {
@@ -102,33 +86,12 @@ public class DataCenterMgr implements Constants {
                 String name = getTextValue(dataCenter, DATA_CENTER_NAME_TAG);
                 String controllerIP = getTextValue(dataCenter, DATA_CENTER_IP_TAG);
                 String spreadGroupName = getTextValue(dataCenter, DATA_CENTER_SP_GROUPNAME_TAG);
-                DataCenter dataCenterObj = new DataCenter(name, controllerIP , spreadGroupName);
+                String longitude = getTextValue(dataCenter, DATA_CENTER_LONGITUDE_TAG);
+                String latitude = getTextValue(dataCenter, DATA_CENTER_LATITUDE_TAG);
+                DataCenter dataCenterObj = new DataCenter(name, controllerIP , spreadGroupName, 
+                                                                Double.parseDouble(longitude), Double.parseDouble(latitude));
                 DataCenterMgr.getInstance().dataCenterMap.put(name, dataCenterObj);
             }
-            
-            /* Build <Zipcode, DataCenter> Map List */
-            NodeList zipCodeMapNode = mainElement.getElementsByTagName(ZIPCODE_DC_MAP_TAG);
-            Element zipCodeMapElem = (Element) zipCodeMapNode.item(0);
-            
-            NodeList keyValuePairList = zipCodeMapElem.getElementsByTagName(KEY_VALUE_PAIR_TAG);
-            for(int index = 0; index < keyValuePairList.getLength(); index++) {
-                Element keyValuePairItem = (Element) keyValuePairList.item(index);
-                
-                String dataCenters = getTextValue(keyValuePairItem, DATA_CENTER_ORDER_TAG);
-                String[] dataCentersArr = dataCenters.split(",");
-                ArrayList<DataCenter> dataCentersList = new ArrayList<DataCenter>();
-                for (int i = 0; i < dataCentersArr.length; i++) {
-                    dataCentersList.add(DataCenterMgr.getInstance().getDataCenter(dataCentersArr[i].trim()));
-                }
-                
-                String zipCodes = getTextValue(keyValuePairItem, ZIPCODE_TAG);
-                String[] zipCodesArr = zipCodes.split(",");
-                for (int i = 0; i < zipCodesArr.length; i++) {
-                    int zipCode = Integer.parseInt(zipCodesArr[i].trim());
-                    DataCenterMgr.getInstance().zipCodeMap.put(zipCode, dataCentersList);
-                }
-            }
-            
             
         } catch (ParserConfigurationException e) {
             // TODO Auto-generated catch block
@@ -166,7 +129,6 @@ public class DataCenterMgr implements Constants {
             FileInputStream is = new FileInputStream(file);
             DataCenterMgr.getInstance().init(is);
             System.out.println(DataCenterMgr.getInstance().dataCenterMap);
-            System.out.println(DataCenterMgr.getInstance().zipCodeMap);
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
