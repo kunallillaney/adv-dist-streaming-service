@@ -68,18 +68,24 @@ public class DataCenterMgr implements Runnable, Constants {
 		try {
 			db = dbf.newDocumentBuilder();
 			Document dom = db.parse(wowzaServerConfiguration);
-			NodeList wowzaServerList = dom.getElementsByTagName(WOWZA_SERVER_LIST_TAG);
+			NodeList wowzaServerList = dom
+					.getElementsByTagName(WOWZA_SERVER_LIST_TAG);
 			Element wowServerList = (Element) wowzaServerList.item(0);
-			
-			NodeList wowzaServers = wowServerList.getElementsByTagName(WOWZA_SERVER_TAG);
-			for(int count = 0; count < wowzaServers.getLength(); count++) {
-			    Element wowzaServer = (Element) wowzaServers.item(count);
-			    WowzaServer wowzaServerObject = new WowzaServer();
-			    wowzaServerObject.setWowzaId(getTextValue(wowzaServer, WOWZA_SERVER_ID_TAG));
-			    wowzaServerObject.setWowzaIp(getTextValue(wowzaServer, WOWZA_SERVER_IP_TAG));
-                wowzaServerObject.setWowzaCapacity(new AtomicInteger(Integer
-                        .parseInt(getTextValue(wowzaServer,WOWZA_SERVER_INITIAL_CAPACITY_TAG))));
-                this.wowzaServerMap.put(wowzaServerObject.getWowzaId(), wowzaServerObject);
+
+			NodeList wowzaServers = wowServerList
+					.getElementsByTagName(WOWZA_SERVER_TAG);
+			for (int count = 0; count < wowzaServers.getLength(); count++) {
+				Element wowzaServer = (Element) wowzaServers.item(count);
+				WowzaServer wowzaServerObject = new WowzaServer();
+				wowzaServerObject.setWowzaId(getTextValue(wowzaServer,
+						WOWZA_SERVER_ID_TAG));
+				wowzaServerObject.setWowzaIp(getTextValue(wowzaServer,
+						WOWZA_SERVER_IP_TAG));
+				wowzaServerObject.setWowzaCapacity(new AtomicInteger(Integer
+						.parseInt(getTextValue(wowzaServer,
+								WOWZA_SERVER_INITIAL_CAPACITY_TAG))));
+				this.wowzaServerMap.put(wowzaServerObject.getWowzaId(),
+						wowzaServerObject);
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -92,22 +98,22 @@ public class DataCenterMgr implements Runnable, Constants {
 			e.printStackTrace();
 		}
 	}
-	
-    private String getTextValue(Element ele, String tagName) {
-        String textVal = null;
-        NodeList nl = ele.getElementsByTagName(tagName);
-        if(nl != null && nl.getLength() > 0) {
-            Element el = (Element)nl.item(0);
-            Node firstChild = el.getFirstChild();
-            if (firstChild != null) {
-                textVal = firstChild.getNodeValue();
-                if (textVal != null) {
-                    textVal = textVal.trim();
-                }
-            }
-        }
-        return textVal;
-    }	
+
+	private String getTextValue(Element ele, String tagName) {
+		String textVal = null;
+		NodeList nl = ele.getElementsByTagName(tagName);
+		if (nl != null && nl.getLength() > 0) {
+			Element el = (Element) nl.item(0);
+			Node firstChild = el.getFirstChild();
+			if (firstChild != null) {
+				textVal = firstChild.getNodeValue();
+				if (textVal != null) {
+					textVal = textVal.trim();
+				}
+			}
+		}
+		return textVal;
+	}
 
 	public int determineCurrentCapacity() {
 		int totalCapacity = 0;
@@ -135,17 +141,18 @@ public class DataCenterMgr implements Runnable, Constants {
 		// Returns the WowzaServer object using the id
 		return wowzaServerMap.get(wowzaId);
 	}
-	
+
 	public static void main(String[] args) {
-	    DataCenterMgr d = new DataCenterMgr();
-	    InputStream wowzaServerConfiguration;
-        try {
-            wowzaServerConfiguration = new FileInputStream("C:\\JHU\\Sem4\\AdvDistributed\\proj\\controller\\conf\\wowzaservers-config.xml");
-            d.init(wowzaServerConfiguration );
-            System.out.println(d.wowzaServerMap);
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+		DataCenterMgr d = new DataCenterMgr();
+		InputStream wowzaServerConfiguration;
+		try {
+			wowzaServerConfiguration = new FileInputStream(
+					"C:\\JHU\\Sem4\\AdvDistributed\\proj\\controller\\conf\\wowzaservers-config.xml");
+			d.init(wowzaServerConfiguration);
+			System.out.println(d.wowzaServerMap);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
