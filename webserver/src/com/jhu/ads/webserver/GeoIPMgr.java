@@ -46,7 +46,7 @@ public class GeoIPMgr {
 	 * @return int
 	 */
 	public int getZipCode(String locationIp) {
-		System.out.println("Raghu is returning:" + locationIp);
+		System.out.println("Query for:"+locationIp);
 		Location centerIp = lookUp.getLocation(locationIp);
 		if (centerIp == null)
 			return 21210;

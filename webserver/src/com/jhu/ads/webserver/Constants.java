@@ -10,6 +10,7 @@ public interface Constants {
     public static String DATA_CENTER_IP_TAG = "Latitude";
     public static String DATA_CENTER_LONGITUDE_TAG = "Longitude";
     public static String DATA_CENTER_LATITUDE_TAG = "Latitude";
+    public static String DATA_CENTER_IS_BUILT_TAG = "IsBuilt";
     public static String DATA_CENTER_SP_GROUPNAME_TAG = "SpreadGroupName";
     
     

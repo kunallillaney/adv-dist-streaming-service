@@ -13,15 +13,17 @@ public class DataCenter {
 	private boolean isAlive = true; //TODO /* Set this in the Token Manager when it starts up. */
 	private double longitude;
 	private double latitude;
+	private boolean isBuilt;
 
     public DataCenter(String name, String controllerIP, String spreadGroupName,
-            double longitude, double latitude) {
+            double longitude, double latitude, boolean isBuilt) {
         this.name = name;
         this.controllerIP = controllerIP;
         this.spreadGroupName = spreadGroupName;
         currentToken = new AtomicInteger(0);
         this.longitude = longitude;
         this.latitude = latitude;
+        this.isBuilt = isBuilt;
     }
 
     public int getAndIncrementCurrentToken() {
@@ -92,7 +94,15 @@ public class DataCenter {
         this.latitude = latitude;
     }
 
-    @Override
+    public boolean isBuilt() {
+		return isBuilt;
+	}
+
+	public void setBuilt(boolean isBuilt) {
+		this.isBuilt = isBuilt;
+	}
+
+	@Override
 	public String toString() {
 	    return "[ " + name + "; " + controllerIP + "; " + spreadGroupName + " ]";
 	}
