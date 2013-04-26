@@ -10,6 +10,8 @@ public class ConfigMgr {
     
     private Properties props;
     
+    private String dHomePath;
+    
     private static String GEO_IP_FILE_PATH_PROPERTY = "MaxMindGeoIPFilePath";
     private static String DATACENTER_INFO_FILE_PATH_PROPERTY = "DataCenterInfoFilePath";
     private static String SPREAD_DEAMON_ADDR_PROPERTY = "SpreadDeamonAddr";
@@ -30,11 +32,19 @@ public class ConfigMgr {
     }
     
     public String getGeoIPFilePath() {
-        return props.getProperty(GEO_IP_FILE_PATH_PROPERTY);
+        String retPath = props.getProperty(GEO_IP_FILE_PATH_PROPERTY);
+        if(retPath == null || retPath.trim().equals("")) {
+            retPath = dHomePath + "/conf/GeoLiteCity.dat";
+        }
+        return retPath;
     }
     
-    public String DataCentersInfoFilePath() {
-        return props.getProperty(DATACENTER_INFO_FILE_PATH_PROPERTY);
+    public String getDataCentersInfoFilePath() {
+        String retPath = props.getProperty(DATACENTER_INFO_FILE_PATH_PROPERTY);
+        if(retPath == null || retPath.trim().equals("")) {
+            retPath = dHomePath + "/conf/datacenter-config.xml";
+        }
+        return retPath;
     }
     
     public String getSpreadDeamonAddress() {
@@ -49,8 +59,9 @@ public class ConfigMgr {
         return props.getProperty(WEB_SERVER_NAME_PROPERTY);
     }
     
-    public void init(String configFilePath) {
-        props = new Properties();
+    public void init(String configFilePath, String dHomePath) {
+        this.props = new Properties();
+        this.dHomePath = dHomePath;
         InputStream inStream;
         try {
             inStream = new FileInputStream(configFilePath);

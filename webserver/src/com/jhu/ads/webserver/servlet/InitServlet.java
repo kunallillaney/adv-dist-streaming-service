@@ -28,11 +28,11 @@ public class InitServlet extends HttpServlet {
         }
         
         // String path = config.getServletContext().getRealPath("/WEB-INF");
-        ConfigMgr.getInstance().init(dHome + "/conf/webserver-config.properties");
+        ConfigMgr.getInstance().init(dHome + "/conf/webserver-config.properties", dHome);
         
         InputStream is;
         try {
-            is = new FileInputStream(dHome + "/conf/datacenter-config.xml");
+            is = new FileInputStream(ConfigMgr.getInstance().getDataCentersInfoFilePath());
             DataCenterMgr.getInstance().init(is);
             is.close();
         } catch (FileNotFoundException e) {
