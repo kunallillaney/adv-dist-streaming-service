@@ -24,6 +24,19 @@ public class DataCenterMgr implements Runnable, Constants {
 	private HashMap<String, WowzaServer> wowzaServerMap = new HashMap<String, WowzaServer>();
 	private ArrayList<String> wowzaList = new ArrayList<String>();
 
+    private volatile static DataCenterMgr _instance;
+    
+    public static DataCenterMgr getInstance() {
+        if(_instance == null) {
+            synchronized (DataCenterMgr.class) {
+                if(_instance == null) {
+                    _instance = new DataCenterMgr();
+                }
+            }
+        }
+        return _instance;
+    }	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
