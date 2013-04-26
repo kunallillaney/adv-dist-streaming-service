@@ -6,8 +6,10 @@ import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
 /**
- * @author klillaney
+ * This class interfaces with the Maxmind API's and provides the user info based
+ * on the IP address of the request
  * 
+ * @author klillaney
  */
 public class GeoIPMgr {
 	LookupService lookUp;
@@ -38,11 +40,13 @@ public class GeoIPMgr {
 	}
 
 	/**
+	 * Gets the zipcode from the Maxmind Database
+	 * 
 	 * @param locationIp
 	 * @return int
 	 */
 	public int getZipCode(String locationIp) {
-		System.out.println("Raghu is returning:"+locationIp);
+		System.out.println("Raghu is returning:" + locationIp);
 		Location centerIp = lookUp.getLocation(locationIp);
 		if (centerIp == null)
 			return 21210;
@@ -50,10 +54,28 @@ public class GeoIPMgr {
 				.parseInt(centerIp.postalCode) : 21210;
 	}
 
+	/**
+	 * Gets the user information from the Maxmind Database and inserts into
+	 * UserInfo
+	 * 
+	 * @param locationIp
+	 * @return UserInfo
+	 */
+	public UserInfo getUserInfo(String locationIp) {
+		Location centerIp = lookUp.getLocation(locationIp);
+		UserInfo user = new UserInfo();
+		if (centerIp == null) {
+			return null;
+		}
+		user.setUserInfo(centerIp, locationIp);
+		return user;
+	}
+
 	public static void main(String[] args) {
 		GeoIPMgr test = new GeoIPMgr();
 		test.init("C:\\Users\\klillaney\\Desktop\\Spring 2013\\Advanced Distributed Systems\\GeoIPJava-1.2.9\\GeoLiteCity.dat");
-		System.out.println(test.getZipCode("128.220.221.123" + ""));
+		UserInfo user = test.getUserInfo("91.224.31.1");
+		System.out.println(user.toString());
 	}
 
 }
