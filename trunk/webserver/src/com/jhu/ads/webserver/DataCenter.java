@@ -11,6 +11,8 @@ public class DataCenter {
 	private int maxToken = 100; // TODO
 	private String spreadGroupName;
 	private boolean isAlive = true; //TODO /* Set this in the Token Manager when it starts up. */
+	private double longitude;
+	private double latitude;
 
     public DataCenter(String name, String controllerIP, String spreadGroupName) {
         this.name = name;
@@ -69,6 +71,22 @@ public class DataCenter {
 
     public void setAlive(boolean isAlive) {
         this.isAlive = isAlive;
+    }
+    
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     @Override
