@@ -30,4 +30,9 @@ public class WowzaServer {
 	public void setWowzaCapacity(AtomicInteger wowzaCapacity) {
 		this.wowzaCapacity = wowzaCapacity;
 	}
+	
+	@Override
+	public String toString() {
+	    return "[WowzaId:" + wowzaId + "; WowzaIp:" + wowzaIp + "; WowzaCapacity:" + wowzaCapacity + "]";
+	}
 }
