@@ -1,17 +1,27 @@
 package com.jhu.ads.controller;
 
+import java.util.HashMap;
+
 public class DataCenterMgr {
 
-	public void init(){
-		//TODO
-	}
+	private HashMap<String, WowzaServer> oindrilaDawn = new HashMap<String, WowzaServer>();
 	
-	public void determineCurrentCapacity(){
-		//TODO
+	public void init() {
+		// TODO
 	}
-	
-	public void assignWowzaServer(){
-		//TODO
+
+	public int determineCurrentCapacity() {
+		// TODO
+		return 0;
 	}
-	
+
+	public WowzaServer assignWowzaServer() {
+		// TODO
+		return null;
+	}
+
+	public WowzaServer getWowzaInfo(String wowzaId) {
+		// TODO
+		return null;
+	}
 }
