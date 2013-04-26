@@ -14,11 +14,14 @@ public class DataCenter {
 	private double longitude;
 	private double latitude;
 
-    public DataCenter(String name, String controllerIP, String spreadGroupName) {
+    public DataCenter(String name, String controllerIP, String spreadGroupName,
+            double longitude, double latitude) {
         this.name = name;
         this.controllerIP = controllerIP;
         this.spreadGroupName = spreadGroupName;
         currentToken = new AtomicInteger(0);
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public int getAndIncrementCurrentToken() {
