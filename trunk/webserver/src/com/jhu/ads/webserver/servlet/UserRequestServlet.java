@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.jhu.ads.webserver.DataCenter;
 import com.jhu.ads.webserver.DataCenterMgr;
 import com.jhu.ads.webserver.GeoIPMgr;
+import com.jhu.ads.webserver.UserInfo;
 
 @WebServlet("/Request")
 public class UserRequestServlet extends HttpServlet {
@@ -20,10 +21,10 @@ public class UserRequestServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         System.out.println("Remote Addr: " + req.getRemoteAddr());
-        int zipCode = GeoIPMgr.getInstance().getZipCode(req.getRemoteAddr());
-        System.out.println("Zip Code: " + zipCode);
+        UserInfo userInfo = GeoIPMgr.getInstance().getUserInfo(req.getRemoteAddr());
+        System.out.println("UserInfo: " + userInfo);
         
-        DataCenter dataCenter = DataCenterMgr.getInstance().getDataCenter(zipCode);
+        DataCenter dataCenter = DataCenterMgr.getInstance().getDataCenter(userInfo);
         int tokenNum = dataCenter.getAndIncrementCurrentToken();
         String token = dataCenter.buildToken(tokenNum);
         
@@ -32,8 +33,13 @@ public class UserRequestServlet extends HttpServlet {
         
         resp.setContentType("text/html");
         PrintWriter printWriter  = resp.getWriter();
-        printWriter.println("<h1> ControllerIP: " + dataCenter.getControllerIP() + "</h1>");
-        printWriter.println("<h1> Token: " + token + "</h1>");
+        printWriter.println("<h2> Client Addr: " + req.getRemoteAddr() + "</h1>");
+        printWriter.println("<h2> ClientInfo: " + userInfo + "</h1>");
+        printWriter.println("<h2> ControllerIP: " + dataCenter.getControllerIP() + "</h1>");
+        printWriter.println("<h2> Token: " + token + "</h1>");
+        
+        // resp.setStatus(302);
+        // resp.setHeader("Location", "www.google.com");
     }
     
     @Override
