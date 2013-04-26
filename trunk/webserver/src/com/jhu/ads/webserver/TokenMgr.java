@@ -20,7 +20,7 @@ import com.jhu.ads.webserver.common.ConfigMgr;
 public class TokenMgr implements AdvancedMessageListener {
 	private SpreadConnection connection;
 	
-	String SPREAD_GROUP_NAME = "GLOBAL_GROUP";
+	String GLOBAL_SPREAD_GROUP_NAME = "GLOBAL_GROUP";
 	
 	private static TokenMgr _instance = null;
     
@@ -78,14 +78,14 @@ public class TokenMgr implements AdvancedMessageListener {
 		}
     	
     	// Join the group
-    	SpreadGroup group = new SpreadGroup();
+    	SpreadGroup globalGroup = new SpreadGroup();
 		try {
-			group.join(connection, SPREAD_GROUP_NAME);
+			globalGroup.join(connection, GLOBAL_SPREAD_GROUP_NAME);
 		} catch (SpreadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Joined " + group + ".");
+		System.out.println("Joined " + globalGroup + ".");
 		
 		// Request the initial set of tokens from all the datacenter
 		Iterator<DataCenter> datacenters = DataCenterMgr.getInstance().getAllDataCenters();
