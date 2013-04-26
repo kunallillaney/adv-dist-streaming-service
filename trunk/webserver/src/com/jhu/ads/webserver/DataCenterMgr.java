@@ -31,7 +31,7 @@ public class DataCenterMgr implements Constants {
 
 	public static DataCenterMgr getInstance() {
 		if (_instance == null) {
-			synchronized (DataCenter.class) {
+			synchronized (DataCenterMgr.class) {
 				if (_instance == null) {
 					_instance = new DataCenterMgr();
 				}
@@ -163,7 +163,7 @@ public class DataCenterMgr implements Constants {
 
 	}
 
-	private static String getTextValue(Element ele, String tagName) {
+	private String getTextValue(Element ele, String tagName) {
 		String textVal = null;
 		NodeList nl = ele.getElementsByTagName(tagName);
 		if (nl != null && nl.getLength() > 0) {
