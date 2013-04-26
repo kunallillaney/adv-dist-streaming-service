@@ -1,0 +1,12 @@
+<WowzaServersList>
+    <WowzaServer>
+        <Id>wowza.1</Id>
+        <Ip>.rent.wowza1</Ip>
+        <InitialCapacity>2</InitialCapacity>
+    </WowzaServer>
+    <WowzaServer>
+        <Id>wowza.2</Id>
+        <Ip>.rent.wowza2</Ip>
+        <InitialCapacity>2</InitialCapacity>
+    </WowzaServer>
+</WowzaServersList>
