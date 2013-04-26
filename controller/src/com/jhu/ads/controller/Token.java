@@ -2,7 +2,6 @@ package com.jhu.ads.controller;
 
 public class Token {
 	private int tokenId;
-	private boolean valid;
 	private long recvdTime;
 
 	public int getTokenId() {
@@ -11,14 +10,6 @@ public class Token {
 
 	public void setTokenId(int tokenId) {
 		this.tokenId = tokenId;
-	}
-
-	public boolean isValid() {
-		return valid;
-	}
-
-	public void setValid(boolean valid) {
-		this.valid = valid;
 	}
 
 	public long getRecvdTime() {
