@@ -10,9 +10,10 @@ public class ConfigMgr {
     
     private static volatile ConfigMgr _instance = null;
     
-    private static String SPREAD_DEAMON_ADDR_PROPERTY = "SpreadDeamonAddr";
-    private static String SPREAD_DEAMON_PORT_PROPERTY = "SpreadDeamonPort";
-    private static String DATA_CENTER_NAME_PROPERTY = "DataCenterName";
+    private static final String SPREAD_DEAMON_ADDR_PROPERTY = "SpreadDeamonAddr";
+    private static final String SPREAD_DEAMON_PORT_PROPERTY = "SpreadDeamonPort";
+    private static final String DATA_CENTER_NAME_PROPERTY = "DataCenterName";
+    private static final String TOKEN_BATCH_COUNT_PROPERTY = "TokenBatchCount";
     
     private Properties props;
     
@@ -55,4 +56,7 @@ public class ConfigMgr {
         return props.getProperty(DATA_CENTER_NAME_PROPERTY);
     }
     
+    public String getTokenBatchCount() {
+        return props.getProperty(TOKEN_BATCH_COUNT_PROPERTY);
+    }
 }
