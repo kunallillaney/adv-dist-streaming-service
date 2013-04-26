@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,23 +18,40 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class DataCenterMgr implements Runnable,Constants {
-	
+public class DataCenterMgr implements Runnable, Constants {
+
 	// HashMap contains the information for all the Wowza Media Servers
 	private HashMap<String, WowzaServer> wowzaServerMap = new HashMap<String, WowzaServer>();
-	/* (non-Javadoc)
+	private ArrayList<String> wowzaList = new ArrayList<String>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
 		// Thread polls all the Wowza Servers and updates the Data Center
-		// TODO
+		while (true) {
+
+			for (WowzaServer iter : wowzaServerMap.values()) {
+				iter.getWowzaIp();
+			}
+			// get value from Wowza API
+			// TODO
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void init(InputStream wowzaServerConfiguration) {
 		// TODO
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
-		
+
 		try {
 			db = dbf.newDocumentBuilder();
 			Document dom = db.parse(wowzaServerConfiguration);
@@ -60,7 +78,6 @@ public class DataCenterMgr implements Runnable,Constants {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
     private String getTextValue(Element ele, String tagName) {
@@ -80,18 +97,30 @@ public class DataCenterMgr implements Runnable,Constants {
     }	
 
 	public int determineCurrentCapacity() {
-		// TODO
-		return 0;
+		int totalCapacity = 0;
+		// Iterating over the WowServer HashMap and incrementing Capacity
+		for (WowzaServer iter : wowzaServerMap.values()) {
+			totalCapacity = totalCapacity + iter.getWowzaCapacity().get();
+		}
+		return totalCapacity;
 	}
 
 	public WowzaServer assignWowzaServer() {
-		// TODO
+		// Iterating over the WowzaServer List for the Wowza id
+		for (String id : wowzaList) {
+			// Uses the wowza id to determine which one has empty capacity and
+			// returns that wowza object else returns null
+			if (wowzaServerMap.get(id).getWowzaCapacity().get() > 0) {
+				wowzaServerMap.get(id).getWowzaCapacity().getAndDecrement();
+				return wowzaServerMap.get(id);
+			}
+		}
 		return null;
 	}
 
 	public WowzaServer getWowzaInfo(String wowzaId) {
-		// TODO
-		return null;
+		// Returns the WowzaServer object using the id
+		return wowzaServerMap.get(wowzaId);
 	}
 	
 	public static void main(String[] args) {
