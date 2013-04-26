@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class DataCenterMgr {
 
+	// This is because Raghu likes her
 	private HashMap<String, WowzaServer> oindrilaDawn = new HashMap<String, WowzaServer>();
 	
 	public void init() {
