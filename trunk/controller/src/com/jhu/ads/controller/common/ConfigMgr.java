@@ -56,7 +56,7 @@ public class ConfigMgr {
         return props.getProperty(DATA_CENTER_NAME_PROPERTY);
     }
     
-    public String getTokenBatchCount() {
-        return props.getProperty(TOKEN_BATCH_COUNT_PROPERTY);
+    public int getTokenBatchCount() {
+        return Integer.parseInt(props.getProperty(TOKEN_BATCH_COUNT_PROPERTY));
     }
 }
