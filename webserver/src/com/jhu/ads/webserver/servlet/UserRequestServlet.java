@@ -33,10 +33,14 @@ public class UserRequestServlet extends HttpServlet {
         
         resp.setContentType("text/html");
         PrintWriter printWriter  = resp.getWriter();
-        printWriter.println("<h2> Client Addr: " + req.getRemoteAddr() + "</h1>");
-        printWriter.println("<h2> ClientInfo: " + userInfo + "</h1>");
-        printWriter.println("<h2> ControllerIP: " + dataCenter.getControllerIP() + "</h1>");
-        printWriter.println("<h2> Token: " + token + "</h1>");
+        printWriter.println("<h2> Client Addr: " + req.getRemoteAddr() + "</h2>");
+        printWriter.println("<h2> Latitude: " + userInfo.getLatitude() + "</h2>");
+        printWriter.println("<h2> Longitude: " + userInfo.getLongitude() + "</h2>");
+        printWriter.println("<h2> Zipcode: " + userInfo.getPostalCode() + "</h2>");
+        printWriter.println("<h2> City: " + userInfo.getCityName() + "</h2>");
+        printWriter.println("<h2> Country: " + userInfo.getCountryName() + "</h2>");
+        printWriter.println("<h2> ControllerIP: " + dataCenter.getControllerIP() + "</h2>");
+        printWriter.println("<h2> Token: " + token + "</h2>");
         
         // resp.setStatus(302);
         // resp.setHeader("Location", "www.google.com");
