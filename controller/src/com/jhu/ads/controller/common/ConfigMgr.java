@@ -14,6 +14,9 @@ public class ConfigMgr {
     private static final String SPREAD_DEAMON_PORT_PROPERTY = "SpreadDeamonPort";
     private static final String DATA_CENTER_NAME_PROPERTY = "DataCenterName";
     private static final String TOKEN_BATCH_COUNT_PROPERTY = "TokenBatchCount";
+    private static final String WOWZA_POLLING_INTERVAL_PROPERTY = "WowzaPollingInterval";
+    private static final String TOKEN_EXPIRY_TIME_PROPERTY = "TokenExpiryTime";
+    private static final String TOKEN_EXPIRY_POLLING_INTERVAL_PROPERTY = "TokenExpiryPollingInterval";
     
     private Properties props;
     
@@ -59,4 +62,17 @@ public class ConfigMgr {
     public int getTokenBatchCount() {
         return Integer.parseInt(props.getProperty(TOKEN_BATCH_COUNT_PROPERTY));
     }
+    
+    public int getWowzaPollingInterval() {
+        return Integer.parseInt(props.getProperty(WOWZA_POLLING_INTERVAL_PROPERTY));
+    }
+    
+    public int getTokenExpiryTime() {
+        return Integer.parseInt(props.getProperty(TOKEN_EXPIRY_TIME_PROPERTY));
+    }
+
+    public int getTokenExpiryPollingInterval() {
+        return Integer.parseInt(props.getProperty(TOKEN_EXPIRY_POLLING_INTERVAL_PROPERTY));
+    }
+    
 }
