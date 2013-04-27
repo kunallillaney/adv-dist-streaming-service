@@ -1,9 +1,11 @@
 package com.jhu.ads.controller;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,11 +48,22 @@ public class DataCenterMgr implements Runnable, Constants {
 		// Thread polls all the Wowza Servers and updates the Data Center
 		while (true) {
 
-			for (WowzaServer iter : wowzaServerMap.values()) {
-				iter.getWowzaIp();
+			int tokenChange = 0;
+			for (WowzaServer wowzaObject : wowzaServerMap.values()) {
+				// Getting the WowzaCount for each WowzaServer and updating the
+				// value
+				int wowzaRemoteValue = getWowzaCount(wowzaObject.getWowzaIp());
+				int wowzaLocalValue = wowzaObject.getWowzaCapacity().get();
+				if (wowzaRemoteValue != wowzaLocalValue) {
+					// If the remote value is larger than local then increase
+					// tokenChange
+					tokenChange = tokenChange + (wowzaRemoteValue - wowzaLocalValue);
+					wowzaObject.getWowzaCapacity().set(wowzaRemoteValue);
+				}// end of outer if
+
+				// set the tokenCount in token Mangaer to tokenChange
+				// TODO
 			}
-			// get value from Wowza API
-			// TODO
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
@@ -59,7 +72,46 @@ public class DataCenterMgr implements Runnable, Constants {
 			}
 		}
 	}
-
+	
+	public int getWowzaCount(String ip){
+		
+		try {
+			// Establishing a url connection to the xml file
+			URL url = new URL("http://"+ip+":8086/connectioncounts.xml");
+			//URL url = new URL("http://localhost:8086/connectioncounts.xml");
+			URLConnection urlConnection = url.openConnection();
+			InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+			
+			// Parsing the XML file
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db;
+			
+			db = dbf.newDocumentBuilder();
+			Document dom = db.parse(in);
+			NodeList countList = dom.getElementsByTagName(WOWZA_MEDIA_SERVER_TAG);
+			for(int i= 0; i<countList.getLength();i++){
+				Element element = (Element)countList.item(i);
+				System.out.println(getTextValue(element, WOWZA_SERVER_COUNT_TAG));
+			}
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return 0;
+		
+	}
+	
 	public void init(InputStream wowzaServerConfiguration) {
 		// TODO
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -144,8 +196,11 @@ public class DataCenterMgr implements Runnable, Constants {
 
 	public static void main(String[] args) {
 		DataCenterMgr d = new DataCenterMgr();
+		d.getWowzaCount("127.0.0.1");
+		/*
 		InputStream wowzaServerConfiguration;
 		try {
+			
 			wowzaServerConfiguration = new FileInputStream(
 					"C:\\JHU\\Sem4\\AdvDistributed\\proj\\controller\\conf\\wowzaservers-config.xml");
 			d.init(wowzaServerConfiguration);
@@ -154,5 +209,6 @@ public class DataCenterMgr implements Runnable, Constants {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 }
