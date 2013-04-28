@@ -43,7 +43,7 @@ public class InitServlet extends HttpServlet {
             e.printStackTrace();
         }
         
-        // TokenMgr.getInstance().init();
+        TokenMgr.getInstance().init();
         GeoIPMgr.getInstance().init(ConfigMgr.getInstance().getGeoIPFilePath());
     }
     
