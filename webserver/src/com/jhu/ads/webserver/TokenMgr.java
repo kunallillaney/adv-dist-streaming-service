@@ -96,16 +96,18 @@ public class TokenMgr implements AdvancedMessageListener {
 
 	@Override
 	public void membershipMessageReceived(SpreadMessage membershipMsg) {  // Identify the sender and set the flag accordingly
-		MembershipInfo memberInfo = membershipMsg.getMembershipInfo();
-		if(memberInfo.isCausedByJoin()){
-			SpreadGroup memberJoined= memberInfo.getJoined();
-			DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberJoined.toString()).setAlive(true);
-		}else if(memberInfo.isCausedByLeave()){
-			SpreadGroup memberLeft= memberInfo.getLeft();
-			DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberLeft.toString()).setAlive(false);			
-		}else if(memberInfo.isCausedByDisconnect()){
-			SpreadGroup memberDisconnected= memberInfo.getDisconnected();
-			DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberDisconnected.toString()).setAlive(false);			
+		if(membershipMsg.getSender().toString().contains("#Data")){
+			MembershipInfo memberInfo = membershipMsg.getMembershipInfo();
+			if(memberInfo.isCausedByJoin()){
+				SpreadGroup memberJoined= memberInfo.getJoined();
+				DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberJoined.toString()).setAlive(true);
+			}else if(memberInfo.isCausedByLeave()){
+				SpreadGroup memberLeft= memberInfo.getLeft();
+				DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberLeft.toString()).setAlive(false);			
+			}else if(memberInfo.isCausedByDisconnect()){
+				SpreadGroup memberDisconnected= memberInfo.getDisconnected();
+				DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberDisconnected.toString()).setAlive(false);			
+			}
 		}
 	}
 
