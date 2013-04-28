@@ -22,8 +22,6 @@ import com.jhu.ads.common.TokenResponseMsg;
 import com.jhu.ads.controller.common.ConfigMgr;
 
 public class TokenMgr implements AdvancedMessageListener, Runnable {
-	// Add the new token to list of corresponding Web server
-	// A thread to clean up expired tokens
 	private SpreadConnection connection;
 	private AtomicInteger remainingTokenCount; // modify this inside sync
 	String GLOBAL_SPREAD_GROUP_NAME = "GLOBAL_GROUP";
