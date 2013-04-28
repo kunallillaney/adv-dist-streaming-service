@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WowzaServer {
 	private String wowzaId;
 	private String wowzaIp;
-	private AtomicInteger currentCapacity;
+	private AtomicInteger currentCapacity = new AtomicInteger();
 	private int maxCapacity;
 
 	public String getWowzaId() {

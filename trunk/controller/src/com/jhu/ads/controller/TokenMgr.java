@@ -23,7 +23,7 @@ import com.jhu.ads.controller.common.ConfigMgr;
 
 public class TokenMgr implements AdvancedMessageListener, Runnable {
 	private SpreadConnection connection;
-	private AtomicInteger remainingTokenCount; // modify this inside sync
+	private AtomicInteger remainingTokenCount = new AtomicInteger(); // modify this inside sync
 	String GLOBAL_SPREAD_GROUP_NAME = "GLOBAL_GROUP";
 	Thread recoverUnusedTokens = null;
 	HashMap<String, TokenInfo> tokenHolder = new HashMap<String, TokenInfo>();
@@ -150,7 +150,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		String sender = webserver_tokenID.substring(0,
 				webserver_tokenID.lastIndexOf("_"));
 		String tokenIDStr = webserver_tokenID
-				.substring(sender.indexOf("_") + 1);
+				.substring(webserver_tokenID.indexOf("_") + 1);
 		int tokenID = Integer.parseInt(tokenIDStr);
 		TokenInfo tokenInfo1 = tokenHolder.get(sender);
 		if (tokenInfo1 == null || tokenID < tokenInfo1.getLastExpiredToken()) {
