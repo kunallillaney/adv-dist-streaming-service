@@ -52,13 +52,14 @@ public class DataCenterMgr implements Runnable, Constants {
 			for (WowzaServer wowzaObject : wowzaServerMap.values()) {
 				// Getting the WowzaCount for each WowzaServer and updating the
 				// value
-				int wowzaRemoteValue = getWowzaCount(wowzaObject.getWowzaIp());
-				int wowzaLocalValue = wowzaObject.getWowzaCapacity().get();
+				int currentConnections = getWowzaCount(wowzaObject.getWowzaIp());
+				int wowzaRemoteValue = wowzaObject.getMaxCapacity() - currentConnections;
+				int wowzaLocalValue = wowzaObject.getCurrentCapacity().get();
 				if (wowzaRemoteValue != wowzaLocalValue) {
 					// If the remote value is larger than local then increase
 					// tokenChange
 					tokenChange = tokenChange + (wowzaRemoteValue - wowzaLocalValue);
-					wowzaObject.getWowzaCapacity().set(wowzaRemoteValue);
+					wowzaObject.getCurrentCapacity().set(wowzaRemoteValue);
 				}// end of outer if
 
 				// set the tokenCount in token Mangaer to tokenChange
@@ -89,11 +90,8 @@ public class DataCenterMgr implements Runnable, Constants {
 			db = dbf.newDocumentBuilder();
 			Document dom = db.parse(in);
 			NodeList countList = dom.getElementsByTagName(WOWZA_MEDIA_SERVER_TAG);
-			for(int i= 0; i<countList.getLength();i++){
-				Element element = (Element)countList.item(i);
-				System.out.println(getTextValue(element, WOWZA_SERVER_COUNT_TAG));
-			}
-			
+			Element element = (Element)countList.item(0);
+			return Integer.parseInt(getTextValue(element, WOWZA_SERVER_COUNT_TAG));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,11 +131,11 @@ public class DataCenterMgr implements Runnable, Constants {
 						WOWZA_SERVER_ID_TAG));
 				wowzaServerObject.setWowzaIp(getTextValue(wowzaServer,
 						WOWZA_SERVER_IP_TAG));
-				wowzaServerObject.setWowzaCapacity(new AtomicInteger(Integer
+				wowzaServerObject.setMaxCapacity(Integer
 						.parseInt(getTextValue(wowzaServer,
-								WOWZA_SERVER_INITIAL_CAPACITY_TAG))));
-				this.wowzaServerMap.put(wowzaServerObject.getWowzaId(),
-						wowzaServerObject);
+								WOWZA_SERVER_MAX_CAPACITY_TAG)));
+				wowzaServerObject.getCurrentCapacity().set(wowzaServerObject.getMaxCapacity()); // TODO: For now. Actually should poll all wowza instances and then initialize this count.
+				this.wowzaServerMap.put(wowzaServerObject.getWowzaId(), wowzaServerObject);
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
@@ -171,7 +169,7 @@ public class DataCenterMgr implements Runnable, Constants {
 		int totalCapacity = 0;
 		// Iterating over the WowServer HashMap and incrementing Capacity
 		for (WowzaServer iter : wowzaServerMap.values()) {
-			totalCapacity = totalCapacity + iter.getWowzaCapacity().get();
+			totalCapacity = totalCapacity + iter.getCurrentCapacity().get();
 		}
 		return totalCapacity;
 	}
@@ -181,8 +179,8 @@ public class DataCenterMgr implements Runnable, Constants {
 		for (String id : wowzaList) {
 			// Uses the wowza id to determine which one has empty capacity and
 			// returns that wowza object else returns null
-			if (wowzaServerMap.get(id).getWowzaCapacity().get() > 0) {
-				wowzaServerMap.get(id).getWowzaCapacity().getAndDecrement();
+			if (wowzaServerMap.get(id).getCurrentCapacity().get() > 0) {
+				wowzaServerMap.get(id).getCurrentCapacity().getAndDecrement();
 				return wowzaServerMap.get(id);
 			}
 		}

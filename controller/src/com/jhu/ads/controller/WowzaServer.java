@@ -5,7 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WowzaServer {
 	private String wowzaId;
 	private String wowzaIp;
-	private AtomicInteger wowzaCapacity;
+	private AtomicInteger currentCapacity;
+	private int maxCapacity;
 
 	public String getWowzaId() {
 		return wowzaId;
@@ -23,16 +24,24 @@ public class WowzaServer {
 		this.wowzaIp = wowzaIp;
 	}
 
-	public AtomicInteger getWowzaCapacity() {
-		return wowzaCapacity;
+	public AtomicInteger getCurrentCapacity() {
+		return currentCapacity;
 	}
 
-	public void setWowzaCapacity(AtomicInteger wowzaCapacity) {
-		this.wowzaCapacity = wowzaCapacity;
+	public void setCurrentCapacity(AtomicInteger currentCapacity) {
+		this.currentCapacity = currentCapacity;
 	}
 	
-	@Override
+	public int getMaxCapacity() {
+        return maxCapacity;
+    }
+
+    public void setMaxCapacity(int maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    @Override
 	public String toString() {
-	    return "[WowzaId:" + wowzaId + "; WowzaIp:" + wowzaIp + "; WowzaCapacity:" + wowzaCapacity + "]";
+	    return "[WowzaId:" + wowzaId + "; WowzaIp:" + wowzaIp + "; WowzaCapacity:" + currentCapacity + "]";
 	}
 }
