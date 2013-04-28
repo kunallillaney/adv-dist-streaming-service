@@ -19,6 +19,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.jhu.ads.webserver.common.ConfigMgr;
+
 public class DataCenterMgr implements Constants {
 
 	private volatile static DataCenterMgr _instance;
@@ -66,6 +68,16 @@ public class DataCenterMgr implements Constants {
 		} else {
 			return getPreferredDatacenter(rentedDataCenterList, userInfo);
 		}
+	}
+	
+	public String getNewToken(DataCenter dataCenter) {
+        int tokenNum = dataCenter.getAndIncrementCurrentToken();
+        if ( (dataCenter.getMaxToken() - tokenNum) 
+                == ConfigMgr.getInstance().getRequestTokensWhenNumberOfTokensRemaining()) {
+            TokenMgr.getInstance().requestTokens(dataCenter);
+        }
+        String token = dataCenter.buildToken(tokenNum);
+        return token;
 	}
 
 	private DataCenter getPreferredDatacenter(
