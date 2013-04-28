@@ -44,7 +44,7 @@ public class InitServlet extends HttpServlet {
         }
         
         TokenMgr.getInstance().init();
-        GeoIPMgr.getInstance().init(ConfigMgr.getInstance().getGeoIPFilePath());
+        GeoIPMgr.getInstance().init();
     }
     
 }

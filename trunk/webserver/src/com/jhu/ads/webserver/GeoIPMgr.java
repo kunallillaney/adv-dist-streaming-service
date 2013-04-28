@@ -2,6 +2,7 @@ package com.jhu.ads.webserver;
 
 import java.io.IOException;
 
+import com.jhu.ads.webserver.common.ConfigMgr;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
@@ -18,9 +19,9 @@ public class GeoIPMgr {
 	private GeoIPMgr() {
 	}
 
-	public void init(String fileName) {
+	public void init() {
 		try {
-			lookUp = new LookupService(fileName,
+			lookUp = new LookupService(ConfigMgr.getInstance().getGeoIPFilePath(),
 					LookupService.GEOIP_MEMORY_CACHE);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -62,7 +63,7 @@ public class GeoIPMgr {
 	 * @return UserInfo
 	 */
 	public UserInfo getUserInfo(String locationIp) {
-		Location centerIp = lookUp.getLocation(locationIp);
+		Location centerIp = lookUp.getLocation("4.59.53.20");
 		UserInfo user = new UserInfo();
 		if (centerIp == null) {
 			return null;
@@ -71,11 +72,5 @@ public class GeoIPMgr {
 		return user;
 	}
 
-	public static void main(String[] args) {
-		GeoIPMgr test = new GeoIPMgr();
-		test.init("C:\\Users\\klillaney\\Desktop\\Spring 2013\\Advanced Distributed Systems\\GeoIPJava-1.2.9\\GeoLiteCity.dat");
-		UserInfo user = test.getUserInfo("91.224.31.1");
-		System.out.println(user.toString());
-	}
 
 }
