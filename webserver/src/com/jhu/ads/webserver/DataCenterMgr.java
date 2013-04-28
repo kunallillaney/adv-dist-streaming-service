@@ -145,6 +145,8 @@ public class DataCenterMgr implements Constants {
 				String name = getTextValue(dataCenter, DATA_CENTER_NAME_TAG);
 				String controllerIP = getTextValue(dataCenter,
 						DATA_CENTER_IP_TAG);
+                int controllerPort = Integer.parseInt(getTextValue(dataCenter,
+                        DATA_CENTER_PORT_TAG));
 				String spreadGroupName = getTextValue(dataCenter,
 						DATA_CENTER_SP_GROUPNAME_TAG);
 				String longitude = getTextValue(dataCenter,
@@ -154,7 +156,7 @@ public class DataCenterMgr implements Constants {
 				String isBuilt = getTextValue(dataCenter,
 						DATA_CENTER_IS_BUILT_TAG);
 
-				DataCenter dataCenterObj = new DataCenter(name, controllerIP,
+				DataCenter dataCenterObj = new DataCenter(name, controllerIP, controllerPort,
 						spreadGroupName, Double.parseDouble(longitude),
 						Double.parseDouble(latitude),
 						Boolean.getBoolean(isBuilt));

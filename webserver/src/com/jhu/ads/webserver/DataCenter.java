@@ -7,6 +7,7 @@ import com.jhu.ads.webserver.common.ConfigMgr;
 public class DataCenter {
 	private String name;
 	private String controllerIP;
+	private int controllerPort;
 	private AtomicInteger currentToken; /* Token Available to be used currently */
 	private int maxToken = 100; // TODO
 	private String spreadGroupName;
@@ -15,10 +16,11 @@ public class DataCenter {
 	private double latitude;
 	private boolean isBuilt;
 
-    public DataCenter(String name, String controllerIP, String spreadGroupName,
+    public DataCenter(String name, String controllerIP, int port, String spreadGroupName,
             double longitude, double latitude, boolean isBuilt) {
         this.name = name;
         this.controllerIP = controllerIP;
+        this.controllerPort = port;
         this.spreadGroupName = spreadGroupName;
         currentToken = new AtomicInteger(0);
         this.longitude = longitude;
@@ -53,8 +55,16 @@ public class DataCenter {
     public void setControllerIP(String controllerIP) {
         this.controllerIP = controllerIP;
     }
+    
+	public int getControllerPort() {
+        return controllerPort;
+    }
 
-	public int getMaxToken() {
+    public void setControllerPort(int controllerPort) {
+        this.controllerPort = controllerPort;
+    }
+
+    public int getMaxToken() {
 		return maxToken;
 	}
 
