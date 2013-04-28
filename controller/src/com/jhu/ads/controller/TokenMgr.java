@@ -52,7 +52,6 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 			connection = new SpreadConnection();
 			connection.connect(InetAddress.getByName(spreadAddr), spreadPort,
 					spreadUser, false, true);
-			connection.add(TokenMgr.getInstance());
 		} catch (SpreadException e) {
 			System.err.println("There was an error connecting to the daemon.");
 			e.printStackTrace();
@@ -66,13 +65,23 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		SpreadGroup globalGroup = new SpreadGroup();
 		try {
 			globalGroup.join(connection, GLOBAL_SPREAD_GROUP_NAME);
+	        System.out.println("Joined " + globalGroup + ".");
 			// TODO: Do the local datacenter spread group
 		} catch (SpreadException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Joined " + globalGroup + ".");
 
-		// Set the total token count to the total wowza server capacity
+        SpreadGroup localGroup = new SpreadGroup();
+        try {
+            localGroup.join(connection, ConfigMgr.getInstance().getDataCenterName());
+            System.out.println("Joined " + ConfigMgr.getInstance().getDataCenterName() + ".");
+        } catch (SpreadException e) {
+            e.printStackTrace();
+        }
+		
+        connection.add(TokenMgr.getInstance());
+        
+        // Set the total token count to the total wowza server capacity
 		remainingTokenCount.set(DataCenterMgr.getInstance()
 				.determineCurrentCapacity());
 		recoverUnusedTokens = new Thread(TokenMgr.getInstance());
@@ -93,6 +102,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		// handle token requests
 		TokenRequestMsg tokenRequestMsg = (TokenRequestMsg) SerializationUtils
 				.deserialize(regularMsg.getData());
+        System.out.println("Received token Request from:" + tokenRequestMsg.getWebserverName());
 		sendTokens(tokenRequestMsg.getWebserverName()); // send the tokens
 	}
 
@@ -227,4 +237,16 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 	public void setTokenCount(AtomicInteger tokenCount) {
 		this.remainingTokenCount = tokenCount;
 	}
+	
+	public static void main(String[] args) {
+        TokenMgr.getInstance().init();
+        try {
+            System.out.println("Sleeping.. ");
+            Thread.sleep(100000000);
+            System.out.println("Exiting.. ");
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }
