@@ -3,6 +3,7 @@
         <DataCenter>
             <Name>Build_West_DataCenter_1</Name>
             <ControllerIP>west.build.c.cnds.jhu.edu</ControllerIP>
+            <ControllerPort>8011</ControllerPort>
             <Longitude>-122.4183</Longitude>
             <Latitude>37.7750</Latitude>
             <IsBuilt>true</IsBuilt>
@@ -11,6 +12,7 @@
         <DataCenter>
             <Name>Build_East_DataCenter_1</Name>
             <ControllerIP>east.build.c.cnds.jhu.edu</ControllerIP>
+            <ControllerPort>8011</ControllerPort>
             <Longitude>-74.0064</Longitude>
             <Latitude>40.7142</Latitude>
             <IsBuilt>true</IsBuilt>
@@ -19,6 +21,7 @@
         <DataCenter>
             <Name>Rent_West_DataCenter_1</Name>
             <ControllerIP>west.rent.c.cnds.jhu.edu</ControllerIP>
+            <ControllerPort>8011</ControllerPort>
             <Longitude>-122.4183</Longitude>
             <Latitude>37.7750</Latitude>
             <IsBuilt>false</IsBuilt>
@@ -27,6 +30,7 @@
         <DataCenter>
             <Name>Rent_East_DataCenter_1</Name>
             <ControllerIP>east.rent.c.cnds.jhu.edu</ControllerIP>
+            <ControllerPort>8011</ControllerPort>
             <Longitude>-74.0064</Longitude>
             <Latitude>40.7142</Latitude>
             <IsBuilt>false</IsBuilt>
