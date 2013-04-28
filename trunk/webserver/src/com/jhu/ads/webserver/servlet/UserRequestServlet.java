@@ -25,8 +25,7 @@ public class UserRequestServlet extends HttpServlet {
         System.out.println("UserInfo: " + userInfo);
         
         DataCenter dataCenter = DataCenterMgr.getInstance().getDataCenter(userInfo);
-        int tokenNum = dataCenter.getAndIncrementCurrentToken();
-        String token = dataCenter.buildToken(tokenNum);
+        String token = DataCenterMgr.getInstance().getNewToken(dataCenter);
         
         System.out.println("Data Center IP: "+dataCenter.getControllerIP());
         System.out.println("Token: "+token);

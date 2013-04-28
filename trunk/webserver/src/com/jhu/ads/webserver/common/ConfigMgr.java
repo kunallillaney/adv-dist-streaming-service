@@ -17,6 +17,7 @@ public class ConfigMgr {
     private static String SPREAD_DEAMON_ADDR_PROPERTY = "SpreadDeamonAddr";
     private static String SPREAD_DEAMON_PORT_PROPERTY = "SpreadDeamonPort";
     private static String WEB_SERVER_NAME_PROPERTY = "WebServerName";
+    private static String REQUEST_TOKENS_WHEN_NUMBER_OF_TOKENS_REMAINING_PROPERTY = "RequestTokensWhenNumberOfTokensRemaining";
     
     private volatile static ConfigMgr _instance = null;
     
@@ -57,6 +58,10 @@ public class ConfigMgr {
 
     public String getWebServerName() {
         return props.getProperty(WEB_SERVER_NAME_PROPERTY);
+    }
+    
+    public int getRequestTokensWhenNumberOfTokensRemaining() {
+        return Integer.parseInt(props.getProperty(REQUEST_TOKENS_WHEN_NUMBER_OF_TOKENS_REMAINING_PROPERTY));
     }
     
     public void init(String configFilePath, String dHomePath) {
