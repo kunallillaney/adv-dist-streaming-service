@@ -96,7 +96,7 @@ public class TokenMgr implements AdvancedMessageListener {
 
 	@Override
 	public void membershipMessageReceived(SpreadMessage membershipMsg) {  // Identify the sender and set the flag accordingly
-		if(membershipMsg.getSender().toString().contains("#Data")){
+		if(membershipMsg.getSender().toString().contains("DC")){
 			MembershipInfo memberInfo = membershipMsg.getMembershipInfo();
 			if(memberInfo.isCausedByJoin()){
 				SpreadGroup memberJoined= memberInfo.getJoined();
