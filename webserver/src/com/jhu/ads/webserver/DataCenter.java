@@ -5,13 +5,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.jhu.ads.webserver.common.ConfigMgr;
 
 public class DataCenter {
+    
+    public static final int UNINITIALIZED = -1;
+    
 	private String name;
 	private String controllerIP;
 	private int controllerPort;
 	private AtomicInteger currentToken; /* Token Available to be used currently */
-	private int maxToken = 100; // TODO
+	private int maxToken;
 	private String spreadGroupName;
-	private boolean isAlive = true; //TODO /* Set this in the Token Manager when it starts up. */
+	private boolean isAlive;
 	private double longitude;
 	private double latitude;
 	private boolean isBuilt;
@@ -26,6 +29,8 @@ public class DataCenter {
         this.longitude = longitude;
         this.latitude = latitude;
         this.isBuilt = isBuilt;
+        isAlive = false;
+        maxToken = UNINITIALIZED;
     }
 
     public int getAndIncrementCurrentToken() {
