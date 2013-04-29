@@ -133,8 +133,9 @@ public class TokenMgr implements AdvancedMessageListener {
 		try {
 		    System.out.println("Web Server: Received TokenResponseMsg - "+regularMsg.toString());
 		    TokenResponseMsg tokenResponseMsg = (TokenResponseMsg) SerializationUtils.deserialize(regularMsg.getData());
-	        DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(regularMsg.getSender().toString())
-	                .setMaxToken(tokenResponseMsg.getMaxCount());
+	        DataCenter dataCenter = DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(regularMsg.getSender().toString());
+	        dataCenter.setMaxToken(tokenResponseMsg.getMaxCount());
+	        dataCenter.setAlive(true);
 		} catch (Throwable t) {
 		    t.printStackTrace();
 		}
