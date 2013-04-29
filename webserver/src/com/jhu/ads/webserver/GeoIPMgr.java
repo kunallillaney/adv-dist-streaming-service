@@ -63,7 +63,7 @@ public class GeoIPMgr {
 	 * @return UserInfo
 	 */
 	public UserInfo getUserInfo(String locationIp) {
-		Location centerIp = lookUp.getLocation("4.59.53.20");
+		Location centerIp = lookUp.getLocation(locationIp);
 		UserInfo user = new UserInfo();
 		if (centerIp == null) {
 			return null;
