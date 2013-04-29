@@ -4,6 +4,11 @@ public class Token {
 	private int tokenId;
 	private long recvdTime;
 
+	public Token(int id) {
+	    this.tokenId = id;
+        this.recvdTime = 0;
+    }
+	
 	public int getTokenId() {
 		return tokenId;
 	}

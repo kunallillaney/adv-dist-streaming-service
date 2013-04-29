@@ -65,7 +65,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		SpreadGroup globalGroup = new SpreadGroup();
 		try {
 			globalGroup.join(connection, GLOBAL_SPREAD_GROUP_NAME);
-	        System.out.println("Joined " + globalGroup + ".");
+	        System.out.println("DataCenter Joined " + globalGroup + ".");
 			// TODO: Do the local datacenter spread group
 		} catch (SpreadException e) {
 			e.printStackTrace();
@@ -74,7 +74,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
         SpreadGroup localGroup = new SpreadGroup();
         try {
             localGroup.join(connection, ConfigMgr.getInstance().getDataCenterName());
-            System.out.println("Joined " + ConfigMgr.getInstance().getDataCenterName() + ".");
+            System.out.println("DataCenter Joined " + ConfigMgr.getInstance().getDataCenterName() + ".");
         } catch (SpreadException e) {
             e.printStackTrace();
         }
@@ -95,22 +95,28 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 	@Override
 	public void membershipMessageReceived(SpreadMessage membershipMsg) {
 		// Currently ignoring all membership messages
+        try {
+            System.out.println("Data Center: Received membership change msg - "+membershipMsg.toString());
+        } catch(Throwable t) {
+            t.printStackTrace();
+        }
 	}
 
 	@Override
 	public void regularMessageReceived(SpreadMessage regularMsg) {
 		// handle token requests
 	    try {
+	        System.out.println("Data Center: Received token Request before Deserialzie");
     		TokenRequestMsg tokenRequestMsg = (TokenRequestMsg) SerializationUtils
     				.deserialize(regularMsg.getData());
-            System.out.println("Received token Request from:" + tokenRequestMsg.getWebserverName());
-    		sendTokens(tokenRequestMsg.getWebserverName()); // send the tokens
+            System.out.println("Data Center: Received Received token Request from:" + tokenRequestMsg.getWebserverName());
+    		sendTokens(tokenRequestMsg.getWebserverName(), regularMsg.getSender().toString()); // send the tokens
 	    } catch (Throwable t) {
 	        t.printStackTrace();
 	    }
 	}
 
-	public void sendTokens(String webserverName) {
+	public void sendTokens(String webserverName, String webServerPrivateSpreadGroupName) {
 		TokenResponseMsg tokenResponseMsg = new TokenResponseMsg();
 		int currentBatchCount, newTokenCount;
 		if (remainingTokenCount.get() < ConfigMgr.getInstance()
@@ -140,7 +146,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		webserverTokenInfo.getLock().lock();
 		try {
 			while (i < currentBatchCount) {
-				webserverTokenInfo.tokenList.put(currentCount + i, new Token());
+				webserverTokenInfo.tokenList.put(currentCount + i, new Token(currentCount + i));
 				i++;
 			}
 		} finally {
@@ -151,7 +157,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		byte[] data = SerializationUtils.serialize(tokenResponseMsg);
 		SpreadMessage message = new SpreadMessage();
 		message.setData(data);
-		message.addGroup(webserverName);
+		message.addGroup(webServerPrivateSpreadGroupName);
 		message.setReliable();
 		// TODO: Add Type of message
 		try {
@@ -161,7 +167,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		}
 	}
 
-	public void handleToken(String webserver_tokenID) {
+	public void handleToken(String webserver_tokenID) throws Exception {
 		// Check if the token is valid
 		String sender = webserver_tokenID.substring(0,
 				webserver_tokenID.lastIndexOf("_"));
@@ -170,11 +176,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		int tokenID = Integer.parseInt(tokenIDStr);
 		TokenInfo tokenInfo1 = tokenHolder.get(sender);
 		if (tokenInfo1 == null || tokenID < tokenInfo1.getLastExpiredToken()) {
-			try {
 				throw new Exception("Token " + tokenID + " Expired");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 
 		Token token = tokenInfo1.tokenList.get(tokenID);
@@ -194,17 +196,18 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		for (;;) {
 			int unusedTokenCount = 0;
 			Collection<TokenInfo> values = tokenHolder.values();
-			for (Iterator iterator = values.iterator(); iterator.hasNext();) {
+			for (Iterator<TokenInfo> iterator = values.iterator(); iterator.hasNext();) {
 				TokenInfo tokenInfo = (TokenInfo) iterator.next();
 				NavigableSet<Integer> tokenKeys = tokenInfo.tokenList
 						.navigableKeySet();
 
-				Iterator iterator2 = tokenKeys.descendingIterator();
+				Iterator<Integer> iterator2 = tokenKeys.descendingIterator();
 				Token currentToken = null;
 				while (iterator2.hasNext()) {
-					currentToken = (Token) iterator2.next();
-					if ((System.currentTimeMillis() - tokenInfo.tokenList.get(
-							currentToken).getRecvdTime()) > ConfigMgr.getInstance().getTokenExpiryTime()) {
+				    int currentTokenId = iterator2.next();
+					currentToken = tokenInfo.tokenList.get(currentTokenId);
+					if (currentToken.getRecvdTime() != 0 &&
+					        (System.currentTimeMillis() - currentToken.getRecvdTime()) > ConfigMgr.getInstance().getTokenExpiryTime()) {
 						break;
 					}
 				}
@@ -212,7 +215,8 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 				tokenInfo.getLock().lock();
 				try {
 					while (iterator2.hasNext()) {
-						currentToken = (Token) iterator2.next();
+					    int currentTokenId = iterator2.next();
+					    currentToken = tokenInfo.tokenList.get(currentTokenId);
 						if (isFirst) {
 							tokenInfo.setLastExpiredToken(currentToken
 									.getTokenId());
@@ -221,7 +225,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 						if (currentToken.getRecvdTime() == 0) {
 							unusedTokenCount++;
 						}
-						tokenInfo.tokenList.remove(currentToken.getTokenId());
+						iterator2.remove();
 					}
 				} finally {
 					tokenInfo.getLock().unlock();

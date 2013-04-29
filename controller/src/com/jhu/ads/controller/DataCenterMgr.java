@@ -136,6 +136,7 @@ public class DataCenterMgr implements Runnable, Constants {
 								WOWZA_SERVER_MAX_CAPACITY_TAG)));
 				wowzaServerObject.getCurrentCapacity().set(wowzaServerObject.getMaxCapacity()); // TODO: For now. Actually should poll all wowza instances and then initialize this count.
 				this.wowzaServerMap.put(wowzaServerObject.getWowzaId(), wowzaServerObject);
+				wowzaList.add(wowzaServerObject.getWowzaId());
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block

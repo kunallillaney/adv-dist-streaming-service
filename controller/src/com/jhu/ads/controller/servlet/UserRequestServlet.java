@@ -34,7 +34,11 @@ public class UserRequestServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 	    String tokenStr = request.getParameter("Token");
-	    TokenMgr.getInstance().handleToken(tokenStr);
+	    try {
+            TokenMgr.getInstance().handleToken(tokenStr);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
 	    
 	    WowzaServer wowzaServer = DataCenterMgr.getInstance().assignWowzaServer();
 	    String wowzaIp = wowzaServer.getWowzaIp();
