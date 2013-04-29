@@ -14,7 +14,7 @@ import com.jhu.ads.controller.DataCenterMgr;
 import com.jhu.ads.controller.TokenMgr;
 import com.jhu.ads.controller.common.ConfigMgr;
 
-@WebServlet( name="InitServlet", displayName="Initialization Servlet", urlPatterns = {"/init"}, loadOnStartup=0)
+@WebServlet( name="InitServlet", displayName="Initialization Servlet", urlPatterns = {"/init"}, loadOnStartup=1)
 public class InitServlet extends HttpServlet {
 
     @Override

@@ -174,16 +174,16 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		String tokenIDStr = webserver_tokenID
 				.substring(webserver_tokenID.indexOf("_") + 1);
 		int tokenID = Integer.parseInt(tokenIDStr);
-		TokenInfo tokenInfo1 = tokenHolder.get(sender);
-		if (tokenInfo1 == null || tokenID < tokenInfo1.getLastExpiredToken()) {
+		TokenInfo tokenInfo = tokenHolder.get(sender);
+		if (tokenInfo == null || tokenID <= tokenInfo.getLastExpiredToken()) {
 				throw new Exception("Token " + tokenID + " Expired");
 		}
 
-		Token token = tokenInfo1.tokenList.get(tokenID);
+		Token token = tokenInfo.tokenList.get(tokenID);
 		token.setTokenId(tokenID);
 		token.setRecvdTime(System.currentTimeMillis());
 		// exists in the list
-		addToList(token, tokenInfo1.tokenList);
+		addToList(token, tokenInfo.tokenList);
 	}
 
 	private void addToList(Token token, TreeMap<Integer, Token> tokenList) {
@@ -203,33 +203,34 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 
 				Iterator<Integer> iterator2 = tokenKeys.descendingIterator();
 				Token currentToken = null;
+				boolean isFound = false;
 				while (iterator2.hasNext()) {
 				    int currentTokenId = iterator2.next();
 					currentToken = tokenInfo.tokenList.get(currentTokenId);
 					if (currentToken.getRecvdTime() != 0 &&
 					        (System.currentTimeMillis() - currentToken.getRecvdTime()) > ConfigMgr.getInstance().getTokenExpiryTime()) {
+					    isFound = true;
 						break;
 					}
 				}
-				boolean isFirst = true;
-				tokenInfo.getLock().lock();
-				try {
-					while (iterator2.hasNext()) {
-					    int currentTokenId = iterator2.next();
-					    currentToken = tokenInfo.tokenList.get(currentTokenId);
-						if (isFirst) {
-							tokenInfo.setLastExpiredToken(currentToken
-									.getTokenId());
-							isFirst = false;
-						}
-						if (currentToken.getRecvdTime() == 0) {
-							unusedTokenCount++;
-						}
-						iterator2.remove();
-					}
-				} finally {
-					tokenInfo.getLock().unlock();
+                if (isFound == true) {
+                    try {
+                        tokenInfo.getLock().lock();
+                        tokenInfo.setLastExpiredToken(currentToken.getTokenId()); // Set the last expired token to the token that was found
+                        iterator2.remove(); // Remove that token element 
+                        while (iterator2.hasNext()) {   // Then iterate through the rest of the items and count the unused ones.
+                            int currentTokenId = iterator2.next();
+                            currentToken = tokenInfo.tokenList.get(currentTokenId);
+                            if (currentToken.getRecvdTime() == 0) {
+                                unusedTokenCount++;
+                            }
+                            iterator2.remove();
+                        }
+                    } finally {
+                        tokenInfo.getLock().unlock();
+                    }
 				}
+                
 				remainingTokenCount.getAndAdd(unusedTokenCount);
 			}
 			try {
