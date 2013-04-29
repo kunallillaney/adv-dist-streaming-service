@@ -41,6 +41,9 @@ public class UserRequestServlet extends HttpServlet {
         }
 	    
 	    WowzaServer wowzaServer = DataCenterMgr.getInstance().assignWowzaServer();
+	    if(wowzaServer == null) {
+	        throw new ServletException("No free Wowza Server Instance found. Please try again later.");
+	    }
 	    String wowzaIp = wowzaServer.getWowzaIp();
 	    
         response.setContentType("text/html");

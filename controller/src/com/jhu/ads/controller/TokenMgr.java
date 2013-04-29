@@ -84,7 +84,7 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
         // Set the total token count to the total wowza server capacity
 		remainingTokenCount.set(DataCenterMgr.getInstance()
 				.determineCurrentCapacity());
-		recoverUnusedTokens = new Thread(TokenMgr.getInstance());
+		recoverUnusedTokens = new Thread(TokenMgr.getInstance(), "RecoverUnusedTokensThread");
 		recoverUnusedTokens.start();
 	}
 
@@ -194,50 +194,53 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 	@Override
 	public void run() {
 		for (;;) {
-			int unusedTokenCount = 0;
-			Collection<TokenInfo> values = tokenHolder.values();
-			for (Iterator<TokenInfo> iterator = values.iterator(); iterator.hasNext();) {
-				TokenInfo tokenInfo = (TokenInfo) iterator.next();
-				NavigableSet<Integer> tokenKeys = tokenInfo.tokenList
-						.navigableKeySet();
-
-				Iterator<Integer> iterator2 = tokenKeys.descendingIterator();
-				Token currentToken = null;
-				boolean isFound = false;
-				while (iterator2.hasNext()) {
-				    int currentTokenId = iterator2.next();
-					currentToken = tokenInfo.tokenList.get(currentTokenId);
-					if (currentToken.getRecvdTime() != 0 &&
-					        (System.currentTimeMillis() - currentToken.getRecvdTime()) > ConfigMgr.getInstance().getTokenExpiryTime()) {
-					    isFound = true;
-						break;
-					}
-				}
-                if (isFound == true) {
-                    try {
-                        tokenInfo.getLock().lock();
-                        tokenInfo.setLastExpiredToken(currentToken.getTokenId()); // Set the last expired token to the token that was found
-                        iterator2.remove(); // Remove that token element 
-                        while (iterator2.hasNext()) {   // Then iterate through the rest of the items and count the unused ones.
-                            int currentTokenId = iterator2.next();
-                            currentToken = tokenInfo.tokenList.get(currentTokenId);
-                            if (currentToken.getRecvdTime() == 0) {
-                                unusedTokenCount++;
+		    try {
+    			int unusedTokenCount = 0;
+    			Collection<TokenInfo> values = tokenHolder.values();
+    			for (Iterator<TokenInfo> iterator = values.iterator(); iterator.hasNext();) {
+    				TokenInfo tokenInfo = (TokenInfo) iterator.next();
+    				NavigableSet<Integer> tokenKeys = tokenInfo.tokenList
+    						.navigableKeySet();
+    
+    				Iterator<Integer> iterator2 = tokenKeys.descendingIterator();
+    				Token currentToken = null;
+    				boolean isFound = false;
+    				while (iterator2.hasNext()) {
+    				    int currentTokenId = iterator2.next();
+    					currentToken = tokenInfo.tokenList.get(currentTokenId);
+    					if (currentToken.getRecvdTime() != 0 &&
+    					        (System.currentTimeMillis() - currentToken.getRecvdTime()) > ConfigMgr.getInstance().getTokenExpiryTime()) {
+    					    isFound = true;
+    						break;
+    					}
+    				}
+                    if (isFound == true) {
+                        try {
+                            int prevLastExpiredToken = tokenInfo.getLastExpiredToken();
+                            tokenInfo.setLastExpiredToken(currentToken.getTokenId()); // Set the last expired token to the token that was found
+                            tokenInfo.getLock().lock();
+                            for(int currentTokenId = currentToken.getTokenId(); currentTokenId > prevLastExpiredToken; currentTokenId--) {
+                                // through the rest of the items and count the unused ones.
+                                currentToken = tokenInfo.tokenList.get(currentTokenId);
+                                if (currentToken.getRecvdTime() == 0) {
+                                    unusedTokenCount++;
+                                }
+                                tokenInfo.tokenList.remove(currentTokenId); // Remove that token element. Do NOT use the navigable key set iterator to remove the element.
                             }
-                            iterator2.remove();
+                        } finally {
+                            tokenInfo.getLock().unlock();
                         }
-                    } finally {
-                        tokenInfo.getLock().unlock();
-                    }
-				}
-                
-				remainingTokenCount.getAndAdd(unusedTokenCount);
-			}
-			try {
-				Thread.sleep(ConfigMgr.getInstance().getTokenExpiryPollingInterval());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+                        remainingTokenCount.getAndAdd(unusedTokenCount); // Do this only when atleast one token was expired.
+    				}
+    			}
+    			try {
+    				Thread.sleep(ConfigMgr.getInstance().getTokenExpiryPollingInterval());
+    			} catch (InterruptedException e) {
+    				e.printStackTrace();
+    			}
+		    } catch(Throwable t) {
+		        t.printStackTrace();
+		    }
 		}
 	}
 
