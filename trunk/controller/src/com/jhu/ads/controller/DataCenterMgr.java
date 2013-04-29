@@ -8,7 +8,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +19,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.jhu.ads.controller.common.ConfigMgr;
+
 public class DataCenterMgr implements Runnable, Constants {
 
 	// HashMap contains the information for all the Wowza Media Servers
@@ -27,6 +28,8 @@ public class DataCenterMgr implements Runnable, Constants {
 	private ArrayList<String> wowzaList = new ArrayList<String>();
 
     private volatile static DataCenterMgr _instance;
+    
+    private Thread wowzaPollingThread = null;
     
     public static DataCenterMgr getInstance() {
         if(_instance == null) {
@@ -47,30 +50,33 @@ public class DataCenterMgr implements Runnable, Constants {
 	public void run() {
 		// Thread polls all the Wowza Servers and updates the Data Center
 		while (true) {
-
-			int tokenChange = 0;
-			for (WowzaServer wowzaObject : wowzaServerMap.values()) {
-				// Getting the WowzaCount for each WowzaServer and updating the
-				// value
-				int currentConnections = getWowzaCount(wowzaObject.getWowzaIp());
-				int wowzaRemoteValue = wowzaObject.getMaxCapacity() - currentConnections;
-				int wowzaLocalValue = wowzaObject.getCurrentCapacity().get();
-				if (wowzaRemoteValue != wowzaLocalValue) {
-					// If the remote value is larger than local then increase
-					// tokenChange
-					tokenChange = tokenChange + (wowzaRemoteValue - wowzaLocalValue);
-					wowzaObject.getCurrentCapacity().set(wowzaRemoteValue);
-				}// end of outer if
-
-				// set the tokenCount in token Mangaer to tokenChange
-				// TODO
-			}
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		    try{
+    			int tokenChange = 0;
+    			for (WowzaServer wowzaObject : wowzaServerMap.values()) {
+    				// Getting the WowzaCount for each WowzaServer and updating the
+    				// value
+    				int currentConnections = getWowzaCount(wowzaObject.getWowzaIp());
+    				int wowzaRemoteValue = wowzaObject.getMaxCapacity() - currentConnections;
+    				int wowzaLocalValue = wowzaObject.getCurrentCapacity().get();
+    				if (wowzaRemoteValue != wowzaLocalValue) {
+    					// If the remote value is larger than local then increase
+    					// tokenChange
+    					tokenChange = tokenChange + (wowzaRemoteValue - wowzaLocalValue);
+    					wowzaObject.getCurrentCapacity().set(wowzaRemoteValue);
+    				}// end of outer if
+    
+    				// set the tokenCount in token Mangaer to tokenChange
+    				TokenMgr.getInstance().getTokenCount().addAndGet(tokenChange);
+    			}
+    			try {
+    				Thread.sleep(ConfigMgr.getInstance().getWowzaPollingInterval());
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            } catch(Throwable t) {
+                t.printStackTrace();
+            }
 		}
 	}
 	
@@ -138,6 +144,8 @@ public class DataCenterMgr implements Runnable, Constants {
 				this.wowzaServerMap.put(wowzaServerObject.getWowzaId(), wowzaServerObject);
 				wowzaList.add(wowzaServerObject.getWowzaId());
 			}
+			wowzaPollingThread = new Thread(DataCenterMgr.getInstance(), "WowzaPollingThread");
+			wowzaPollingThread.start();
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
