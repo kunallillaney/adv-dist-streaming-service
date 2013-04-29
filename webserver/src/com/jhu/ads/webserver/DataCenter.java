@@ -38,7 +38,7 @@ public class DataCenter {
     }
     
     public boolean isDataCenterFull() {
-        return (currentToken.get() < maxToken) ? false : true;
+        return (currentToken.get() < maxToken) ? false : true; // Very correct. DO not change this. currentToken should exclude maxToken value.
     }
     
     public String buildToken(int tokenNum) {
