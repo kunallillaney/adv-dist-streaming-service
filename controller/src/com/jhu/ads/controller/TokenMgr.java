@@ -100,10 +100,14 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 	@Override
 	public void regularMessageReceived(SpreadMessage regularMsg) {
 		// handle token requests
-		TokenRequestMsg tokenRequestMsg = (TokenRequestMsg) SerializationUtils
-				.deserialize(regularMsg.getData());
-        System.out.println("Received token Request from:" + tokenRequestMsg.getWebserverName());
-		sendTokens(tokenRequestMsg.getWebserverName()); // send the tokens
+	    try {
+    		TokenRequestMsg tokenRequestMsg = (TokenRequestMsg) SerializationUtils
+    				.deserialize(regularMsg.getData());
+            System.out.println("Received token Request from:" + tokenRequestMsg.getWebserverName());
+    		sendTokens(tokenRequestMsg.getWebserverName()); // send the tokens
+	    } catch (Throwable t) {
+	        t.printStackTrace();
+	    }
 	}
 
 	public void sendTokens(String webserverName) {
@@ -119,8 +123,10 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		remainingTokenCount.addAndGet(-currentBatchCount);
 
 		Integer currentCount = webserveTokenCount.get(webserverName);
-		newTokenCount = (currentCount == null ? 0 : currentCount)
-				+ currentBatchCount;
+		if(currentCount == null) {
+		    currentCount = 0;
+		}
+		newTokenCount = currentCount + currentBatchCount;
 		webserveTokenCount.put(webserverName, newTokenCount);
 
 		// Add the tokens to the list
