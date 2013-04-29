@@ -6,6 +6,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class TokenInfo {
 
+    private static final int UNINITIALIZED = -1;
+    
 	private int lastExpiredToken;
 	private Lock lock;
 	public Lock getLock() {
@@ -15,7 +17,7 @@ public class TokenInfo {
 	
 	public TokenInfo() {
 		tokenList = new TreeMap<Integer , Token>();
-		lastExpiredToken = 0;
+		lastExpiredToken = UNINITIALIZED;
 		lock = new ReentrantLock();
 	}
 	
