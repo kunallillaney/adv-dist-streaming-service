@@ -46,7 +46,7 @@ public class DataCenterMgr implements Constants {
 		return dataCenterMap.get(name);
 	}
 
-	public DataCenter getDataCenter(UserInfo userInfo) {
+	public DataCenter getDataCenter(UserInfo userInfo) throws Exception {
 		Collection<DataCenter> dataCenterValueSet = dataCenterMap.values();
 		ArrayList<DataCenter> buildDataCenterList = new ArrayList<DataCenter>();
 		ArrayList<DataCenter> rentedDataCenterList = new ArrayList<DataCenter>();
@@ -61,6 +61,11 @@ public class DataCenterMgr implements Constants {
 					rentedDataCenterList.add(dataCenter);
 				}
 			}
+		}
+		
+		if(buildDataCenterList.isEmpty() && rentedDataCenterList.isEmpty()) {
+		    // All the dataCenters are full.
+		    throw new Exception("All Datacenters are full");
 		}
 
 		if (!buildDataCenterList.isEmpty()) {

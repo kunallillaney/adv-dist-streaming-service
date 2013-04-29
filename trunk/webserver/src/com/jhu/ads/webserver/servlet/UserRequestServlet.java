@@ -24,7 +24,14 @@ public class UserRequestServlet extends HttpServlet {
         UserInfo userInfo = GeoIPMgr.getInstance().getUserInfo(req.getRemoteAddr());
         System.out.println("UserInfo: " + userInfo);
         
-        DataCenter dataCenter = DataCenterMgr.getInstance().getDataCenter(userInfo);
+        DataCenter dataCenter = null;
+        try {
+            dataCenter = DataCenterMgr.getInstance().getDataCenter(userInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServletException(e);
+        }
+        
         String token = DataCenterMgr.getInstance().getNewToken(dataCenter);
         
         System.out.println("Data Center IP: "+dataCenter.getControllerIP());
@@ -45,7 +52,7 @@ public class UserRequestServlet extends HttpServlet {
         // resp.setHeader("Location", "www.google.com");
         
         printWriter.println("<br/><br/><h2> Click the following link to view the video: </h2>");
-        String link = "http://"+dataCenter.getControllerIP()+":"+dataCenter.getControllerPort()+"/Request?Token="+token;
+        String link = "http://"+dataCenter.getControllerIP()+":"+dataCenter.getControllerPort()+"/"+"ADSDataCenterController"+"/Request?Token="+token;
         printWriter.println("<a href='"+link+"'>"+link+"</a>");
     }
     

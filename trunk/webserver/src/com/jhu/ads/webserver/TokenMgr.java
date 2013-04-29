@@ -43,6 +43,7 @@ public class TokenMgr implements AdvancedMessageListener {
     	message.setData(data);
     	message.addGroup(dataCenter.getSpreadGroupName());
     	message.setReliable();
+    	System.out.println("Webserver Reqesting tokens to: " + dataCenter.getSpreadGroupName());
     	// TODO: Add Type
     	try {
 			connection.multicast(message);
@@ -54,9 +55,9 @@ public class TokenMgr implements AdvancedMessageListener {
     
     public void init() {
     	// Establish the spread connection at address:port
-    	String spreadUser = ConfigMgr.getInstance().getWebServerName();
-    	String spreadAddr = ConfigMgr.getInstance().getSpreadDeamonAddress();
-    	int spreadPort = ConfigMgr.getInstance().getSpreadDeamonPort();
+    	String spreadUser = ConfigMgr.getInstance().getWebServerName(); //
+    	String spreadAddr = ConfigMgr.getInstance().getSpreadDeamonAddress(); //  
+    	int spreadPort = ConfigMgr.getInstance().getSpreadDeamonPort(); // 
     	
     	try
 		{
@@ -81,11 +82,11 @@ public class TokenMgr implements AdvancedMessageListener {
     	SpreadGroup globalGroup = new SpreadGroup();
 		try {
 			globalGroup.join(connection, GLOBAL_SPREAD_GROUP_NAME);
+	        System.out.println("WebServer Joined " + globalGroup + ".");
 		} catch (SpreadException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Joined " + globalGroup + ".");
 		
 		// Request the initial set of tokens from all the datacenter
 		Iterator<DataCenter> datacenters = DataCenterMgr.getInstance().getAllDataCenters();
@@ -96,25 +97,50 @@ public class TokenMgr implements AdvancedMessageListener {
 
 	@Override
 	public void membershipMessageReceived(SpreadMessage membershipMsg) {  // Identify the sender and set the flag accordingly
-		if(membershipMsg.getSender().toString().contains("DC")){
-			MembershipInfo memberInfo = membershipMsg.getMembershipInfo();
-			if(memberInfo.isCausedByJoin()){
-				SpreadGroup memberJoined= memberInfo.getJoined();
-				DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberJoined.toString()).setAlive(true);
-			}else if(memberInfo.isCausedByLeave()){
-				SpreadGroup memberLeft= memberInfo.getLeft();
-				DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberLeft.toString()).setAlive(false);			
-			}else if(memberInfo.isCausedByDisconnect()){
-				SpreadGroup memberDisconnected= memberInfo.getDisconnected();
-				DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberDisconnected.toString()).setAlive(false);			
-			}
+		try {
+		    System.out.println("Web Server: Received membership change msg - "+membershipMsg.toString());
+    	    if(membershipMsg.getSender().toString().equals(GLOBAL_SPREAD_GROUP_NAME)) { // If this membership message belongs to the Global group
+    			MembershipInfo memberInfo = membershipMsg.getMembershipInfo();
+    			if(memberInfo.isCausedByJoin()){
+    				SpreadGroup memberJoined= memberInfo.getJoined();
+    				if(memberJoined.toString().contains("DC")) {
+    				    DataCenter dataCenter = DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberJoined.toString());
+                        dataCenter.setAlive(true);
+    				    // If there were no tokens ever requested from this data center, then request for some tokens
+    				    if(dataCenter.getMaxToken() == DataCenter.UNINITIALIZED) {
+    				        requestTokens(dataCenter);
+    				    }
+    				}
+    			}else if(memberInfo.isCausedByLeave()){
+    				SpreadGroup memberLeft= memberInfo.getLeft();
+    				if(memberLeft.toString().contains("DC")) {
+    				    DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberLeft.toString()).setAlive(false);
+    				}
+    			}else if(memberInfo.isCausedByDisconnect()){
+    				SpreadGroup memberDisconnected= memberInfo.getDisconnected();
+    				if(memberDisconnected.toString().contains("DC")) { 
+    				    DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(memberDisconnected.toString()).setAlive(false);
+    				}
+    			}
+    		}
+		} catch(Throwable t) {
+		    t.printStackTrace();
 		}
 	}
 
 	@Override
 	public void regularMessageReceived(SpreadMessage regularMsg) {
-		TokenResponseMsg tokenResponseMsg = (TokenResponseMsg) SerializationUtils.deserialize(regularMsg.getData());
-		DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(regularMsg.getSender().toString())
-			.setMaxToken(tokenResponseMsg.getMaxCount());
+		try {
+		    System.out.println("Web Server: Received TokenResponseMsg - "+regularMsg.toString());
+		    TokenResponseMsg tokenResponseMsg = (TokenResponseMsg) SerializationUtils.deserialize(regularMsg.getData());
+	        DataCenterMgr.getInstance().getDataCenterBasedOnSpreadName(regularMsg.getSender().toString())
+	                .setMaxToken(tokenResponseMsg.getMaxCount());
+		} catch (Throwable t) {
+		    t.printStackTrace();
+		}
 	}
+	
+	public static void main(String[] args) {
+        TokenMgr.getInstance().init();
+    }
 }
