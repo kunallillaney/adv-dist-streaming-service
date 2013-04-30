@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WowzaServer {
 	private String wowzaId;
 	private String wowzaIp;
+	private int streamingPort;
 	private AtomicInteger currentCapacity = new AtomicInteger();
 	private int maxCapacity;
 
@@ -20,10 +21,18 @@ public class WowzaServer {
 		return wowzaIp;
 	}
 
-	public void setWowzaIp(String wowzaIp) {
+    public void setWowzaIp(String wowzaIp) {
 		this.wowzaIp = wowzaIp;
 	}
+    
+    public int getStreamingPort() {
+        return streamingPort;
+    }
 
+    public void setStreamingPort(int streamingPort) {
+        this.streamingPort = streamingPort;
+    }
+    
 	public AtomicInteger getCurrentCapacity() {
 		return currentCapacity;
 	}

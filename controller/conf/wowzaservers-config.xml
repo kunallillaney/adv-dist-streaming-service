@@ -3,10 +3,12 @@
         <Id>wowza.1</Id>
         <Ip>.rent.wowza1</Ip>
         <MaxCapacity>5</MaxCapacity>
+        <StreamingPort>8012</StreamingPort>
     </WowzaServer>
     <WowzaServer>
         <Id>wowza.2</Id>
         <Ip>.rent.wowza2</Ip>
         <MaxCapacity>5</MaxCapacity>
+        <StreamingPort>8012</StreamingPort>
     </WowzaServer>
 </WowzaServersList>
