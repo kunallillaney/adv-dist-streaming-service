@@ -110,13 +110,13 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
     		TokenRequestMsg tokenRequestMsg = (TokenRequestMsg) SerializationUtils
     				.deserialize(regularMsg.getData());
             System.out.println("Data Center: Received Received token Request from:" + tokenRequestMsg.getWebserverName());
-    		sendTokens(tokenRequestMsg.getWebserverName(), regularMsg.getSender().toString()); // send the tokens
+    		handleRequestTokenMessage(tokenRequestMsg.getWebserverName(), regularMsg.getSender().toString()); // send the tokens
 	    } catch (Throwable t) {
 	        t.printStackTrace();
 	    }
 	}
 
-	public void sendTokens(String webserverName, String webServerPrivateSpreadGroupName) {
+	public void handleRequestTokenMessage(String webserverName, String webServerPrivateSpreadGroupName) {
 		TokenResponseMsg tokenResponseMsg = new TokenResponseMsg();
 		int currentBatchCount, newTokenCount;
 		if (remainingTokenCount.get() < ConfigMgr.getInstance()
@@ -248,10 +248,6 @@ public class TokenMgr implements AdvancedMessageListener, Runnable {
 		return remainingTokenCount;
 	}
 
-	public void setTokenCount(AtomicInteger tokenCount) {
-		this.remainingTokenCount = tokenCount;
-	}
-	
 	public static void main(String[] args) {
         TokenMgr.getInstance().init();
         try {

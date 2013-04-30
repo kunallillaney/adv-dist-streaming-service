@@ -45,15 +45,16 @@ public class UserRequestServlet extends HttpServlet {
 	        throw new ServletException("No free Wowza Server Instance found. Please try again later.");
 	    }
 	    String wowzaIp = wowzaServer.getWowzaIp();
+	    int wowzaStreamingPort = wowzaServer.getStreamingPort();
 	    
         response.setContentType("text/html");
         PrintWriter printWriter  = response.getWriter();
 
         printWriter.println("<embed width='768' height='456' " +
                 		    "src='http://www.focusonthefamily.com/family/JWPlayer/mediaplayer.swf'        " +
-                		    "flashvars='file=sample.mp4&streamer=rtmp://"+wowzaIp+"/vod/'" +
+                		    "flashvars='file=sample.mp4&streamer=rtmp://"+wowzaIp+":"+wowzaStreamingPort+"/vod/'" +
                 		    "/>");
-        printWriter.println("<h2>Video is being served from "+wowzaIp+"</h2>");
+        printWriter.println("<h2>Video is being served from "+wowzaIp+":"+wowzaStreamingPort+"</h2>");
 	    
 	}
 }

@@ -137,6 +137,8 @@ public class DataCenterMgr implements Runnable, Constants {
 						WOWZA_SERVER_ID_TAG));
 				wowzaServerObject.setWowzaIp(getTextValue(wowzaServer,
 						WOWZA_SERVER_IP_TAG));
+                wowzaServerObject.setStreamingPort(Integer.parseInt(getTextValue(wowzaServer,
+                        WOWZA_SERVER_STREAMING_PORT_TAG)));
 				wowzaServerObject.setMaxCapacity(Integer
 						.parseInt(getTextValue(wowzaServer,
 								WOWZA_SERVER_MAX_CAPACITY_TAG)));
