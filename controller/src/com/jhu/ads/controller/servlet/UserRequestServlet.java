@@ -52,7 +52,7 @@ public class UserRequestServlet extends HttpServlet {
 
         printWriter.println("<embed width='768' height='456' " +
                 		    "src='http://www.focusonthefamily.com/family/JWPlayer/mediaplayer.swf'        " +
-                		    "flashvars='file=sample.mp4&streamer=rtmp://"+wowzaIp+":"+wowzaStreamingPort+"/vod/'" +
+                		    "flashvars='autostart=true&allowfullscreen=true&file=sample.mp4&streamer=rtmp://"+wowzaIp+":"+wowzaStreamingPort+"/vod/'" +
                 		    "/>");
         printWriter.println("<h2>Video is being served from "+wowzaIp+":"+wowzaStreamingPort+"</h2>");
 	    
