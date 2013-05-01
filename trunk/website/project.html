@@ -1,10 +1,10 @@
 <html> 
 <head> 
-<title>Title</title> 
+<title>Reconstructing Netflix: Buy vs Rent</title> 
 <meta name="author" content="Aditya Rao, Raghuram SV, and Kunal Lillaney"> 
 <meta name="date" content="2013-4-29T00:00:00-0000"> 
 <meta name="copyright" content=""> 
-<meta name="keywords" content="Video Streaming, Distributed Systems, OpenStack, Spread, Tomcat"> 
+<meta name="keywords" content="Video Streaming, Distributed Systems, OpenStack, Spread, Tomcat, Netflix, Cost Estimation"> 
 <meta name="description" content="Subtitle"> 
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW"> 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
@@ -14,21 +14,22 @@
 </head> 
 <body> 
  
-<img src="/netflix.jpg" alt=" The power of Internet for delivering content" />
+<img src="netflix.jpg" width=100% height=40% alt=" The power of Internet for delivering content" />
 
-<h2>Heading<h2> 
-<h4>Subtitle</h4> 
+<h2>Reconstructing Netflix: Buy vs Rent<h2> 
+<h4>A Ditributed Video Streaming service</h4> 
 Aditya Rao, Raghuram SV, and Kunal Lillaney<br><br><br> 
  
-<b>Overview</b><br> Netflix, in 2012, with about 30 million users accounts for approximately 30% of downstream traffic in the US. Internet has overtaken cable tv as the most used form of watching content.<br> 
- 
-<p> Abstract</p>
- 
-<br> We explore the possibility of deploying a service like Netflix and the challenges faced in delivering content over the internet. We carefully analyzed the deployment model used by Netflix and derived a conclusion that 
-Our system was deployable on a built datacenter and a rented datacenter like Amazon. Openstack was used to simulate Amazon's AWS, Wowza Media Server's were used to <br> 
+<b>Overview</b><br> Netflix, in 2012, with about 30 million users accounts for approximately 30% of downstream traffic in the US. 
+Internet has overtaken cable tv as the most used form of watching content.<br> 
+<br> We explore the possibility of deploying a service like Netflix and the challenges faced in delivering content over the internet. We carefully analyzed 
+the deployment model used by Netflix and derived a conclusion that using only rented systems would not prove cost effective in the long run and would lead to complete 
+dependency on an external provider. Our system is designed to use the best of both worlds and is deployable in tandem on both built and leased datacenters
+( example Amazon AWS). Openstack is used to simulate Amazon's AWS, Wowza Media Server is used to stream content and Spread is used to allocate resources. <br> 
+<br>
 <b>Resources</b><br><br> 
-<a href="*.pdf" target="new">Project Presentation</a><br><br> 
-<a href="*.tar.gz" target="new">Source Code</a> 
+<a href="netflix_presentation.pdf" target="new">Project Presentation</a><br><br> 
+<a href="netflix_code.tar.gz" target="new">Source Code</a> 
  
 </body> 
 </html> 
