@@ -68,6 +68,10 @@ public class DataCenter {
     public void setControllerPort(int controllerPort) {
         this.controllerPort = controllerPort;
     }
+    
+    public AtomicInteger getCurrentToken() {
+        return currentToken;
+    }
 
     public int getMaxToken() {
 		return maxToken;

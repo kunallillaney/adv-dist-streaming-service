@@ -21,12 +21,14 @@ import org.xml.sax.SAXException;
 
 import com.jhu.ads.webserver.common.ConfigMgr;
 
-public class DataCenterMgr implements Constants {
+public class DataCenterMgr implements Runnable, Constants {
 
 	private volatile static DataCenterMgr _instance;
 
 	private HashMap<String, DataCenter> dataCenterMap;
-
+	
+    private Thread tokenRequestThread = null;
+    
 	private DataCenterMgr() {
 		dataCenterMap = new HashMap<String, DataCenter>();
 	}
@@ -180,6 +182,8 @@ public class DataCenterMgr implements Constants {
 			e.printStackTrace();
 		}
 
+        tokenRequestThread = new Thread(DataCenterMgr.getInstance(), "TokenRequestThread");
+        tokenRequestThread.start();
 	}
 
 	private String getTextValue(Element ele, String tagName) {
@@ -199,6 +203,30 @@ public class DataCenterMgr implements Constants {
 		return textVal;
 	}
 
+
+    @Override
+    public void run() {
+        while(true) {
+            try {
+                Iterator<DataCenter> datacenters = DataCenterMgr.getInstance().getAllDataCenters();
+                while(datacenters.hasNext()){
+                    DataCenter dataCenter = datacenters.next();
+                    if(dataCenter.getCurrentToken().get() == dataCenter.getMaxToken()) {
+                        TokenMgr.getInstance().requestTokens(dataCenter);
+                    }
+                }
+                try {
+                    Thread.sleep(ConfigMgr.getInstance().getRequestTokenThreadInterval());
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }	
+	
 	public static void main(String[] args) {
 		String file = "C:\\JHU\\Sem4\\AdvDistributed\\proj\\webserver\\src\\datacenter-config.xml";
 		try {
@@ -211,4 +239,5 @@ public class DataCenterMgr implements Constants {
 		}
 	}
 
+	
 }
