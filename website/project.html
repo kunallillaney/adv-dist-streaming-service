@@ -1,6 +1,6 @@
 <html> 
 <head> 
-<title>Reconstructing Netflix: Buy vs Rent</title> 
+<title>Reconstructing Netflix: Build vs Rent</title> 
 <meta name="author" content="Aditya Rao, Raghuram SV, and Kunal Lillaney"> 
 <meta name="date" content="2013-4-29T00:00:00-0000"> 
 <meta name="copyright" content=""> 
@@ -16,16 +16,18 @@
  
 <img src="netflix.jpg" width=100% height=40% alt=" The power of Internet for delivering content" />
 
-<h2>Reconstructing Netflix: Buy vs Rent<h2> 
-<h4>A Ditributed Video Streaming service</h4> 
-Aditya Rao, Raghuram SV, Kunal Lillaney<br><br><br> 
+<h2>Reconstructing Netflix: Build vs Rent<h2> 
+<h3>A Ditributed Video Streaming service</h3> 
+Aditya Rao, Raghuram SV, Kunal Lillaney<br><br> 
  
-<b>Overview</b><br> Netflix, in 2012, with about 30 million subscribers makes up approximately 30% of downstream traffic in the US. 
-Internet has overtaken cable tv as the most used form of watching content.<br> 
-<br> We explore the potential of deploying a Netflix like service and the challenges faced in content delivery over the internet. We carefully analyzed 
-the deployment model used by Netflix and derived a conclusion that using only rented systems would not prove cost effective in the long run and lead to complete 
-dependency on an external provider. On the other hand an external provider gives us the relative freedom of scaling our resources with actually Our system is designed to use the best of both worlds and is deployable in tandem on both built and leased datacenters
-( example Amazon AWS). Openstack is used to simulate Amazon's AWS, Wowza Media Server is used to stream content and Spread is used to allocate resources. <br> 
+<b>Overview</b><br> Netflix, in 2012, with about 30 million subscribers accounts for approximately 30% of downstream traffic in the US and has overtaken cable 
+tv as the favoured medium of watching media content.<br> 
+<br> We explore the potential of deploying a Netflix-like service and the challenges faced in video content delivery over the internet. We carefully analyzed 
+the deployment model used by Netflix and derived a conclusion that using only rented systems would not prove cost effective in the long run and will lead to complete 
+dependence on an external provider. On the other hand an external provider gives us the relative freedom of scaling resources depending on current demand 
+without actually having to constantly run them. Our system is designed to use the best of both the worlds and is deployable on both built and leased 
+datacenters(example Amazon AWS) in tandem. 
+Openstack is used to simulate Amazon's AWS, Wowza Media Server to stream content, Maxmind GeoIP to identify IP location and Spread to allocate resources. <br> 
 <br>
 <b>Resources</b><br><br> 
 <a href="netflix_presentation.pdf" target="new">Project Presentation</a><br><br> 
