@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.jhu.ads.common.UserInfo;
 import com.jhu.ads.webserver.common.ConfigMgr;
 
 public class DataCenterMgr implements Runnable, Constants {
@@ -80,7 +81,7 @@ public class DataCenterMgr implements Runnable, Constants {
 	public String getNewToken(DataCenter dataCenter) {
         int tokenNum = dataCenter.getAndIncrementCurrentToken();
         if ( (dataCenter.getMaxToken() - tokenNum) 
-                == ConfigMgr.getInstance().getRequestTokensWhenNumberOfTokensRemaining()) {
+                == dataCenter.getRequestTokensWhenNumOfTokensRemaining()) {
             TokenMgr.getInstance().requestTokens(dataCenter);
         }
         String token = dataCenter.buildToken(tokenNum);
@@ -160,13 +161,16 @@ public class DataCenterMgr implements Runnable, Constants {
 						DATA_CENTER_LONGITUDE_TAG);
 				String latitude = getTextValue(dataCenter,
 						DATA_CENTER_LATITUDE_TAG);
+				int requestTokensWhenNumOfTokensRemaining = Integer.parseInt(getTextValue(dataCenter,
+				        REQUEST_TOKENS_WHEN_NUMBER_OF_TOKENS_REMAINING_TAG));
 				String isBuilt = getTextValue(dataCenter,
 						DATA_CENTER_IS_BUILT_TAG);
-
+				
 				DataCenter dataCenterObj = new DataCenter(name, controllerIP, controllerPort,
 						spreadGroupName, Double.parseDouble(longitude),
 						Double.parseDouble(latitude),
-						Boolean.getBoolean(isBuilt));
+						requestTokensWhenNumOfTokensRemaining, Boolean.getBoolean(isBuilt));
+				
 				DataCenterMgr.getInstance().dataCenterMap.put(name,
 						dataCenterObj);
 			}

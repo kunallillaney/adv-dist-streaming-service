@@ -2,6 +2,7 @@ package com.jhu.ads.webserver;
 
 import java.io.IOException;
 
+import com.jhu.ads.common.UserInfo;
 import com.jhu.ads.webserver.common.ConfigMgr;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
@@ -68,7 +69,14 @@ public class GeoIPMgr {
 		if (centerIp == null) {
 			return null;
 		}
-		user.setUserInfo(centerIp, locationIp);
+		
+		user.setLocationIp(locationIp);
+		user.setCountryName(centerIp.countryName);
+		user.setCityName(centerIp.city);
+		user.setPostalCode(centerIp.postalCode);
+		user.setLatitude((double) centerIp.latitude);
+		user.setLongitude((double) centerIp.longitude);
+		
 		return user;
 	}
 

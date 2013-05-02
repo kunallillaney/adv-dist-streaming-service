@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.jhu.ads.common.UserInfo;
 import com.jhu.ads.webserver.DataCenter;
 import com.jhu.ads.webserver.DataCenterMgr;
 import com.jhu.ads.webserver.GeoIPMgr;
-import com.jhu.ads.webserver.UserInfo;
 
 @WebServlet("/Request")
 public class UserRequestServlet extends HttpServlet {
