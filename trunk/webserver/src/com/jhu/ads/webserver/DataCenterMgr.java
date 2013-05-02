@@ -169,7 +169,7 @@ public class DataCenterMgr implements Runnable, Constants {
 				DataCenter dataCenterObj = new DataCenter(name, controllerIP, controllerPort,
 						spreadGroupName, Double.parseDouble(longitude),
 						Double.parseDouble(latitude),
-						requestTokensWhenNumOfTokensRemaining, Boolean.getBoolean(isBuilt));
+						requestTokensWhenNumOfTokensRemaining, Boolean.parseBoolean(isBuilt));
 				
 				DataCenterMgr.getInstance().dataCenterMap.put(name,
 						dataCenterObj);
