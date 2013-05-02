@@ -24,15 +24,15 @@ public class Cost {
     public long uncommonUsersPerInstance;
     public double commonUncommonRatio;
     public long maxConcurrentUsers;
+    public double bandwidthPerUser; /* Mbps */
     
     /* Build your own */
     public long buildCostPerInstance; /* In dollars including electricity for UPGRADE_YEARS years */
-    public long upgradeYears;
-    public double costFor1_5Mbps; /* dollars per user per month */
+    public double upgradeYears;
+    public double costFor1Mbps; /* dollars per user per month */
     
     /* Rent */
     public long rentCostPerInstance; /* In dollars per year, for medium utilization */
-    public double bandwidthPerUser; /* Mbps */
     public double costPerGigaByteTransfer;
     
     /* Misc */
@@ -56,13 +56,13 @@ public class Cost {
             uncommonUsersPerInstance = getL("UNCOMMON_USERS_PER_INSTANCE");
             commonUncommonRatio = getD("commonUncommonRatio");
             maxConcurrentUsers = getL("MAX_CONCURRENT_USERS");
+            bandwidthPerUser = getD("BANDWIDTH_PER_USER"); /* Mbps */
             
             buildCostPerInstance = getL("BUILD_COST_PER_INSTANCE"); /* In dollars including electricity for UPGRADE_YEARS years */
-            upgradeYears = getL("UPGRADE_YEARS");
-            costFor1_5Mbps = getD("COST_FOR_1_5_Mbps"); /* dollars per user per month */
+            upgradeYears = getD("UPGRADE_YEARS");
+            costFor1Mbps = getD("COST_FOR_1_Mbps"); /* dollars per user per month */
             
             rentCostPerInstance = getL("RENT_COST_PER_INSTANCE"); /* In dollars per year, for medium utilization */
-            bandwidthPerUser = getD("BANDWIDTH_PER_USER"); /* Mbps */
             costPerGigaByteTransfer = getD("COST_PER_GIGABYTE_TRANSFER");
             
             scaleUsersBy = getL("SCALE_USERS_BY");
@@ -110,10 +110,10 @@ public class Cost {
         long uncommonMovieInstances = (long)((numUsers*(1-commonUncommonRatio))/uncommonUsersPerInstance);
         long totalInstances = commonMovieInstances + uncommonMovieInstances;
         long infrastructureCost = totalInstances * buildCostPerInstance;
-        long infrastructureCostPerYear = infrastructureCost/upgradeYears; /* Effective Per year cost */
+        long infrastructureCostPerYear = (long)(infrastructureCost/upgradeYears); /* Effective Per year cost */
         
         /* Network Cost */
-        long networkCostPerYear = (long)(numUsers * costFor1_5Mbps * MONTHS_IN_AN_YEAR);
+        long networkCostPerYear = (long)(numUsers * costFor1Mbps * bandwidthPerUser * MONTHS_IN_AN_YEAR);
         System.out.println("infrastructureCostPerYear = " + infrastructureCostPerYear + " networkCostPerYear = " + networkCostPerYear);
         return (infrastructureCostPerYear + networkCostPerYear);   
     }
