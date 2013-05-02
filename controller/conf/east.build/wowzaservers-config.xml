@@ -1,0 +1,8 @@
+<WowzaServersList>
+    <WowzaServer>
+        <Id>wowza.1</Id>
+        <Ip>east.build.wowza1.cnds.jhu.edu</Ip>
+        <MaxCapacity>4</MaxCapacity>
+        <StreamingPort>8012</StreamingPort>
+    </WowzaServer>
+</WowzaServersList>

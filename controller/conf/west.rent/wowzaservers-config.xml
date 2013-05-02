@@ -1,13 +1,13 @@
 <WowzaServersList>
     <WowzaServer>
         <Id>wowza.1</Id>
-        <Ip>.rent.wowza1</Ip>
+        <Ip>west.rent.wowza1.cnds.jhu.edu</Ip>
         <MaxCapacity>2</MaxCapacity>
         <StreamingPort>8012</StreamingPort>
     </WowzaServer>
     <WowzaServer>
         <Id>wowza.2</Id>
-        <Ip>.rent.wowza2</Ip>
+        <Ip>west.rent.wowza2.cnds.jhu.edu</Ip>
         <MaxCapacity>2</MaxCapacity>
         <StreamingPort>8012</StreamingPort>
     </WowzaServer>
