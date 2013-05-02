@@ -17,10 +17,11 @@ public class DataCenter {
 	private boolean isAlive;
 	private double longitude;
 	private double latitude;
+	private int requestTokensWhenNumOfTokensRemaining;
 	private boolean isBuilt;
 
     public DataCenter(String name, String controllerIP, int port, String spreadGroupName,
-            double longitude, double latitude, boolean isBuilt) {
+            double longitude, double latitude, int requestTokensWhenNumOfTokensRemaining, boolean isBuilt) {
         this.name = name;
         this.controllerIP = controllerIP;
         this.controllerPort = port;
@@ -30,6 +31,7 @@ public class DataCenter {
         this.latitude = latitude;
         this.isBuilt = isBuilt;
         isAlive = false;
+        this.requestTokensWhenNumOfTokensRemaining = requestTokensWhenNumOfTokensRemaining;
         maxToken = UNINITIALIZED;
     }
 
@@ -120,8 +122,17 @@ public class DataCenter {
 	public void setBuilt(boolean isBuilt) {
 		this.isBuilt = isBuilt;
 	}
+	
+	public int getRequestTokensWhenNumOfTokensRemaining() {
+        return requestTokensWhenNumOfTokensRemaining;
+    }
 
-	@Override
+    public void setRequestTokensWhenNumOfTokensRemaining(
+            int requestTokensWhenNumOfTokensRemaining) {
+        this.requestTokensWhenNumOfTokensRemaining = requestTokensWhenNumOfTokensRemaining;
+    }
+
+    @Override
 	public String toString() {
 	    return "[ " + name + "; " + controllerIP + "; " + spreadGroupName + " ]";
 	}
