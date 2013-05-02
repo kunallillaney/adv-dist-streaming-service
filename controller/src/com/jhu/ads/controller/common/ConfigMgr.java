@@ -17,6 +17,7 @@ public class ConfigMgr {
     private static final String WOWZA_POLLING_INTERVAL_PROPERTY = "WowzaPollingInterval";
     private static final String TOKEN_EXPIRY_TIME_PROPERTY = "TokenExpiryTime";
     private static final String TOKEN_EXPIRY_POLLING_INTERVAL_PROPERTY = "TokenExpiryPollingInterval";
+    private static final String WEB_SERVER_URL_PROPERTY = "WebServerURL";
     
     private Properties props;
     
@@ -73,6 +74,14 @@ public class ConfigMgr {
 
     public int getTokenExpiryPollingInterval() {
         return Integer.parseInt(props.getProperty(TOKEN_EXPIRY_POLLING_INTERVAL_PROPERTY));
+    }
+
+    public String getWebServerURL() {
+        String webServerURL = props.getProperty(WEB_SERVER_URL_PROPERTY);
+        if(webServerURL == null || webServerURL.equals("")) {
+            webServerURL = "http://webserver1.cnds.jhu.edu:8012/WebServer/";
+        }
+        return webServerURL;
     }
     
 }
