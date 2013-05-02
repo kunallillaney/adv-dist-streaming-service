@@ -52,7 +52,7 @@ public class UserRequestServlet extends HttpServlet {
         // resp.setHeader("Location", "www.google.com");
         
         printWriter.println("<br/><br/><h2> Click the following link to view the video: </h2>");
-        String link = "http://"+dataCenter.getControllerIP()+":"+dataCenter.getControllerPort()+"/"+"AdvancedController"+"/Request?Token="+token;
+        String link = "http://"+dataCenter.getControllerIP()+":"+dataCenter.getControllerPort()+"/"+"Controller"+"/Request?Token="+token;
         printWriter.println("<a href='"+link+"'>"+link+"</a>");
     }
     
