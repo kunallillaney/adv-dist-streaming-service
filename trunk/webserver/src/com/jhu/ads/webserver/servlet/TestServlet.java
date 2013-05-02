@@ -32,6 +32,8 @@ public class TestServlet extends HttpServlet {
 		PrintWriter printWriter = response.getWriter();
 		printWriter.println("Hello <"+request.getRemoteAddr()+">!");
 		printWriter.println("Hello <"+request.getRemoteHost()+">!");
+		
+		response.sendRedirect("http://google.com");
 	}
 
 	/**
